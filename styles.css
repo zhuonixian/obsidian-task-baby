@@ -151,3 +151,57 @@
   border-radius: 4px;
   font-size: 11px;
 }
+
+/* —— Task 16 follow-up: missing selectors —— */
+.tb-board-body {
+  /* container for tab content; uses CSS grid from child view */
+}
+
+.tb-group-title {
+  font-weight: bold;
+}
+
+.tb-group-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.tb-group-collapse-hint {
+  margin-left: auto;
+  font-size: 10px;
+}
+
+.tb-cal-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.tb-cal-range {
+  font-size: 11px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4px 0;
+}
+
+.tb-cal-detail-holder {
+  margin-top: 12px;
+  padding: 10px;
+  background: var(--background-secondary);
+  border-radius: 6px;
+}
+
+.tb-day-detail {
+  font-size: 12px;
+}
+
+.tb-day-detail-title {
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: var(--text-normal);
+}
+
+.tb-cal-day.has-tasks {
+  font-weight: bold;
+}
