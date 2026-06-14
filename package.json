@@ -1,0 +1,23 @@
+{
+  "name": "obsidian-task-board",
+  "version": "0.1.0",
+  "description": "Visualize completed/pending tasks across daily-note logs",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "node esbuild.config.mjs --production",
+    "test": "jest",
+    "test:w": "jest --watch",
+    "lint": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "@types/node": "^20.11.0",
+    "builtin-modules": "^3.3.0",
+    "dayjs": "^1.11.10",
+    "esbuild": "^0.20.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "typescript": "^5.3.0"
+  }
+}

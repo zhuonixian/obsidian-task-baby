@@ -1,0 +1,10 @@
+{
+  "id": "task-board",
+  "name": "Task Board",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Visualize completed/pending tasks across daily-note logs",
+  "author": "Your Name",
+  "authorUrl": "",
+  "isDesktopOnly": true
+}
