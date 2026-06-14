@@ -98,3 +98,65 @@ describe('TaskParser basics', () => {
     expect(tasks[0].body).toBe('大写X');
   });
 });
+
+describe('TaskParser metadata', () => {
+  const content = readFileSync(join(__dirname, '../../__fixtures__/cases/tasks-plugin-metadata.md'), 'utf8');
+  const tasks = parseFile(content, 'p', new Date(2026, 5, 14));
+
+  test('parses due date (📅)', () => {
+    const t = tasks.find(x => x.body.startsWith('学 Rust'))!;
+    expect(t.meta?.due).toEqual(new Date(2026, 5, 20));
+  });
+
+  test('parses scheduled date (⏳)', () => {
+    const t = tasks.find(x => x.body.startsWith('写周报'))!;
+    expect(t.meta?.scheduled).toEqual(new Date(2026, 5, 15));
+  });
+
+  test('parses start date (🛫)', () => {
+    const t = tasks.find(x => x.body.startsWith('读书'))!;
+    expect(t.meta?.start).toEqual(new Date(2026, 5, 1));
+    expect(t.meta?.due).toEqual(new Date(2026, 5, 30));
+  });
+
+  test('parses done date (✅)', () => {
+    const t = tasks.find(x => x.body.startsWith('写周报'))!;
+    expect(t.meta?.done).toEqual(new Date(2026, 5, 14));
+  });
+
+  test('parses recurrence (🔁) as raw string', () => {
+    const t = tasks.find(x => x.body.startsWith('重复任务'))!;
+    expect(t.meta?.recurrence).toBe('every week');
+  });
+
+  test('parses priority emojis', () => {
+    expect(tasks.find(t => t.body.startsWith('优先级最低'))!.meta?.priority).toBe('lowest');
+    expect(tasks.find(t => t.body.startsWith('高优先级'))!.meta?.priority).toBe('highest');
+    expect(tasks.find(t => t.body.startsWith('学 Rust'))!.meta?.priority).toBe('high');
+  });
+
+  test('parses tags', () => {
+    const t = tasks.find(x => x.body.startsWith('多标签'))!;
+    expect(t.meta?.tags).toEqual(['a', 'b', 'c']);
+  });
+
+  test('parses Chinese tags', () => {
+    const t = tasks.find(x => x.body.startsWith('中文'))!;
+    expect(t.meta?.tags).toContain('中文');
+  });
+
+  test('strips emoji from body display', () => {
+    const t = tasks.find(x => x.body.startsWith('学 Rust'))!;
+    expect(t.body).not.toContain('📅');
+    expect(t.body).not.toContain('🔼');
+    expect(t.body).not.toContain('#p1');
+    expect(t.body).toBe('学 Rust');
+  });
+
+  test('non-standard date format leaves meta undefined', () => {
+    // 文件没有非标日期 fixture，单独测：
+    const t = parseFile('- [ ] foo 📅 6/20/2026', 'p', new Date())[0];
+    expect(t.meta?.due).toBeUndefined();
+    expect(t.body).toBe('foo');
+  });
+});

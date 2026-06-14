@@ -1,9 +1,82 @@
-// src/data/taskParser.ts
-import type { Task } from '../types';
-import { textHash, stripMeta } from '../utils/textHash';
+// src/data/taskParser.ts (full rewrite)
+import type { Task, TaskMeta, Priority } from '../types';
+import { textHash, stripMeta, PRIORITY_EMOJI } from '../utils/textHash';
 
 const TASK_LINE_RE = /^(\s*)[-*+] \[( |[xX])\] (.+)$/;
 const CODE_FENCE_RE = /^(\s*)(```|~~~)/;
+
+// Emoji patterns
+const DATE_EMOJI_RE = /([\u{1F4C5}\u{23F3}\u{1F6EB}\u{2705}])\s*(\d{4}-\d{2}-\d{2})/u;
+const RECURRENCE_RE = /\u{1F501}\s*([^#\u{1F4C5}\u{23F3}\u{1F6EB}\u{2705}\u{23EB}\u{1F53C}\u{1F53D}\u{23EC}]+)/u;
+const TAG_RE = /#([\w一-龥-]+)/g;
+
+const EMOJI_TO_FIELD: Record<string, keyof Pick<TaskMeta, 'due' | 'scheduled' | 'start' | 'done'>> = {
+  '📅': 'due',
+  '⏳': 'scheduled',
+  '🛫': 'start',
+  '✅': 'done'
+};
+
+function parseDate(s: string): Date | null {
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!m) return null;
+  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+  return isNaN(d.getTime()) ? null : d;
+}
+
+function parseMeta(body: string): { meta: TaskMeta; strippedBody: string } {
+  const meta: TaskMeta = { tags: [] };
+
+  // 1. Date emojis (📅 ⏳ 🛫 ✅)
+  // 匹配 emoji + 紧跟的日期 token（严格 YYYY-MM-DD 才写入 meta），
+  // 但无论日期是否合法，都将该 emoji+token 段从 body 中剥离，
+  // 以保证 body 显示干净（见 spec 测试 'non-standard date format'）。
+  let stripped = body;
+  for (const [emoji, field] of Object.entries(EMOJI_TO_FIELD)) {
+    const re = new RegExp(`${emoji}\\s*(\\d{4}-\\d{2}-\\d{2})`, 'u');
+    const strictM = stripped.match(re);
+    if (strictM) {
+      const d = parseDate(strictM[1]);
+      if (d) (meta as any)[field] = d;
+      stripped = stripped.replace(re, '');
+    } else {
+      // 非标日期：剥离 emoji + 紧跟的下一个非空白、非 emoji token
+      const looseRe = new RegExp(
+        `${emoji}\\s*[^#\\s\\u{1F4C5}\\u{23F3}\\u{1F6EB}\\u{2705}\\u{1F501}\\u{23EB}\\u{1F53C}\\u{1F53D}\\u{23EC}]+`,
+        'u'
+      );
+      stripped = stripped.replace(looseRe, '');
+    }
+  }
+
+  // 2. Recurrence 🔁
+  const recM = stripped.match(RECURRENCE_RE);
+  if (recM) {
+    meta.recurrence = recM[1].trim();
+    stripped = stripped.replace(RECURRENCE_RE, '');
+  }
+
+  // 3. Priority
+  for (const [emoji, pri] of Object.entries(PRIORITY_EMOJI)) {
+    if (stripped.includes(emoji)) {
+      meta.priority = pri;
+      stripped = stripped.split(emoji).join('');
+      break;
+    }
+  }
+
+  // 4. Tags
+  let tagM: RegExpExecArray | null;
+  while ((tagM = TAG_RE.exec(stripped)) !== null) {
+    meta.tags.push(tagM[1]);
+  }
+  stripped = stripped.replace(TAG_RE, '');
+
+  // 5. Clean whitespace
+  stripped = stripped.replace(/\s+/g, ' ').trim();
+
+  return { meta, strippedBody: stripped };
+}
 
 export function parseFile(
   content: string,
@@ -17,32 +90,31 @@ export function parseFile(
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i];
 
-    // —— 代码块状态机 ——
     if (CODE_FENCE_RE.test(line)) {
       inCodeBlock = !inCodeBlock;
       continue;
     }
     if (inCodeBlock) continue;
 
-    // —— 任务行匹配 ——
     const m = line.match(TASK_LINE_RE);
     if (!m) continue;
 
     const indent = m[1].length;
     const checked = m[2] === 'x' || m[2] === 'X';
-    const body = m[3].trim();
+    const rawBody = m[3].trim();
+    const { meta, strippedBody } = parseMeta(rawBody);
 
     tasks.push({
       sourcePath,
       sourceDate,
       lineStart: i,
-      lineEnd: i, // v1: 单行任务
+      lineEnd: i,
       rawText: line,
-      body,
-      bodyHash: textHash(stripMeta(body)),
+      body: strippedBody,
+      bodyHash: textHash(stripMeta(strippedBody)),
       checked,
       indent,
-      meta: { tags: [] } // Task 6 fills this
+      meta
     });
   }
 
