@@ -79,4 +79,5 @@ export class App {
 }
 
 // Common re-exports
-export const moment = (await import('dayjs')).default;
+import dayjs from 'dayjs';
+export const moment = dayjs;

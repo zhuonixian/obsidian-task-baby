@@ -4,7 +4,7 @@ import builtins from 'builtin-modules';
 
 const prod = process.argv.includes('--production');
 
-const ctx = await esbuild.context({
+const commonOptions = {
   entryPoints: ['src/main.ts'],
   bundle: true,
   external: [
@@ -30,11 +30,11 @@ const ctx = await esbuild.context({
   treeShaking: true,
   outfile: 'main.js',
   minify: prod
-});
+};
 
 if (prod) {
-  await ctx.build();
-  await ctx.dispose();
+  await esbuild.build(commonOptions);
 } else {
+  const ctx = await esbuild.context(commonOptions);
   await ctx.watch();
 }
