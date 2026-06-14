@@ -86,7 +86,8 @@ function parseMeta(body: string): { meta: TaskMeta; strippedBody: string } {
 export function parseFile(
   content: string,
   sourcePath: string,
-  sourceDate: Date
+  sourceDate: Date,
+  parseMetaFlag: boolean = true
 ): Task[] {
   const lines = content.replace(/\r\n/g, '\n').split('\n');
   const tasks: Task[] = [];
@@ -107,7 +108,17 @@ export function parseFile(
     const indent = m[1].length;
     const checked = m[2] === 'x' || m[2] === 'X';
     const rawBody = m[3].trim();
-    const { meta, strippedBody } = parseMeta(rawBody);
+
+    let meta: TaskMeta;
+    let bodyForDisplay: string;
+    if (parseMetaFlag) {
+      const parsed = parseMeta(rawBody);
+      meta = parsed.meta;
+      bodyForDisplay = parsed.strippedBody;
+    } else {
+      meta = { tags: [] };
+      bodyForDisplay = rawBody;
+    }
 
     tasks.push({
       sourcePath,
@@ -115,8 +126,8 @@ export function parseFile(
       lineStart: i,
       lineEnd: i,
       rawText: line,
-      body: strippedBody,
-      bodyHash: textHash(stripMeta(strippedBody)),
+      body: bodyForDisplay,
+      bodyHash: textHash(stripMeta(bodyForDisplay)),
       checked,
       indent,
       meta

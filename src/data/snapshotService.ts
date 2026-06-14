@@ -28,7 +28,7 @@ export function getSnapshot(
       for (const { file, sourceDate } of matched) {
         try {
           const content = await vault.read(file);
-          const tasks = parseFile(content, file.path, sourceDate);
+          const tasks = parseFile(content, file.path, sourceDate, settings.enableTasksMetadata);
           allTasks.push(...tasks);
         } catch (e) {
           errors.push({ path: file.path, error: e as Error });

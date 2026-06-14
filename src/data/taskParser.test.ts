@@ -180,3 +180,24 @@ describe('TaskParser metadata', () => {
     expect(t.body).toBe('foo');
   });
 });
+
+describe('TaskParser enableTasksMetadata flag', () => {
+  test('parseMetaFlag=false: emoji stays in body, meta is empty', () => {
+    const content = '- [ ] 学 Rust 📅 2026-06-20 🔼 #p1\n';
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 14), false);
+    expect(tasks.length).toBe(1);
+    expect(tasks[0].body).toBe('学 Rust 📅 2026-06-20 🔼 #p1');
+    expect(tasks[0].meta?.due).toBeUndefined();
+    expect(tasks[0].meta?.priority).toBeUndefined();
+    expect(tasks[0].meta?.tags).toEqual([]);
+  });
+
+  test('parseMetaFlag=true (default): emoji stripped, meta populated', () => {
+    const content = '- [ ] 学 Rust 📅 2026-06-20 🔼 #p1\n';
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 14));
+    expect(tasks[0].body).toBe('学 Rust');
+    expect(tasks[0].meta?.due).toEqual(new Date(2026, 5, 20));
+    expect(tasks[0].meta?.priority).toBe('high');
+    expect(tasks[0].meta?.tags).toEqual(['p1']);
+  });
+});
