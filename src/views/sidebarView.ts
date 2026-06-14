@@ -38,6 +38,7 @@ export class SidebarCompactView extends ItemView {
     const root = this.contentEl;
     root.empty();
     root.addClass('tb-sidebar-root');
+    (root.style as any).fontSize = `${this.plugin.settings.fontSize}px`;
 
     // —— header ——
     const header = h('div', { cls: 'tb-sidebar-header' });

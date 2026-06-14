@@ -41,6 +41,7 @@ export class BoardTabView extends ItemView {
     const root = this.contentEl;
     root.empty();
     root.addClass('tb-board-root');
+    (root.style as any).fontSize = `${this.plugin.settings.fontSize}px`;
 
     // —— header ——
     const header = h('div', { cls: 'tb-board-header' });

@@ -55,6 +55,7 @@ export interface TaskBoardSettings {
   enableTasksMetadata: boolean;
   sidebarCompactLimit: number;
   appendDoneDate: boolean;
+  fontSize: number;          // panel base font size in px (default 13)
 }
 
 // —— 错误类型 ——

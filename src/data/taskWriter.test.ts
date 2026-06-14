@@ -11,7 +11,8 @@ const SETTINGS: TaskBoardSettings = {
   rangeDays: 30,
   enableTasksMetadata: true,
   sidebarCompactLimit: 5,
-  appendDoneDate: true
+  appendDoneDate: true,
+  fontSize: 13
 };
 
 function setupVault(content: string): { vault: Vault; file: TFile } {

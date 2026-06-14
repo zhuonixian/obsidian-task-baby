@@ -87,6 +87,21 @@ export class TaskBoardSettingTab extends PluginSettingTab {
         }));
 
     new Setting(containerEl)
+      .setName('面板字体大小')
+      .setDesc('面板基础字体大小（px，9-24，默认 13）')
+      .addText(text => text
+        .setPlaceholder('13')
+        .setValue(String(this.plugin.settings.fontSize))
+        .onChange(async v => {
+          const n = Number(v);
+          if (!isNaN(n) && n >= 9 && n <= 24) {
+            this.plugin.settings.fontSize = n;
+            await this.plugin.saveSettings();
+            this.plugin.refreshAllViews();
+          }
+        }));
+
+    new Setting(containerEl)
       .setName('测试匹配')
       .setDesc('预览最近匹配的日志文件，验证配置正确性')
       .addButton(btn => btn

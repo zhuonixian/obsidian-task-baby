@@ -1,7 +1,7 @@
-/* styles.css */
+/* styles.css — font-sizes are em-based so the `fontSize` setting scales everything */
 .tb-sidebar-root, .tb-board-root {
   padding: 10px;
-  font-size: 13px;
+  font-size: 13px; /* overridden at runtime by settings.fontSize via root.style.fontSize */
 }
 
 .tb-sidebar-header, .tb-board-header {
@@ -23,7 +23,7 @@
   padding: 4px 8px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 0.85em;
 }
 
 .tb-group { margin-bottom: 14px; }
@@ -31,7 +31,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  font-size: 11px;
+  font-size: 0.85em;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-muted);
@@ -41,10 +41,10 @@
   background: var(--background-modifier-border);
   padding: 1px 6px;
   border-radius: 8px;
-  font-size: 10px;
+  font-size: 0.77em;
 }
 .tb-group-more {
-  font-size: 10px;
+  font-size: 0.77em;
   color: var(--text-muted);
   text-align: center;
   padding: 4px;
@@ -66,13 +66,13 @@
   text-decoration: line-through;
 }
 .tb-task-pri {
-  font-size: 11px;
+  font-size: 0.85em;
   padding: 0 2px;
 }
 .tb-pri-highest, .tb-pri-high { color: var(--text-error); }
 .tb-pri-low, .tb-pri-lowest { color: var(--text-muted); }
 .tb-task-src {
-  font-size: 9px;
+  font-size: 0.69em;
   background: var(--background-secondary-alt);
   padding: 1px 5px;
   border-radius: 3px;
@@ -103,7 +103,7 @@
   padding: 4px 10px;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 12px;
+  font-size: 0.92em;
 }
 .tb-tab.active {
   background: var(--interactive-accent);
@@ -124,7 +124,7 @@
 }
 .tb-cal-dow {
   text-align: center;
-  font-size: 10px;
+  font-size: 0.77em;
   color: var(--text-muted);
   padding: 2px 0;
 }
@@ -132,14 +132,26 @@
   background: var(--background-secondary);
   border-radius: 3px;
   padding: 4px;
-  min-height: 40px;
-  font-size: 11px;
+  min-height: 3em;
+  font-size: 0.85em;
   cursor: pointer;
 }
 .tb-cal-day.empty { background: transparent; cursor: default; }
-.tb-cal-day.today { outline: 1px solid var(--interactive-accent); }
-.tb-cal-n { font-weight: bold; display: block; font-size: 10px; color: var(--text-muted); }
-.tb-cal-badge { font-size: 9px; margin-top: 2px; }
+.tb-cal-day.today {
+  font-weight: bold;
+  color: var(--interactive-accent);
+}
+.tb-cal-day.selected {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: -1px;
+  background: var(--background-modifier-border);
+}
+.tb-cal-day.today.selected {
+  /* both indicators stack: bold text + outline + stronger bg */
+  background: var(--background-modifier-border);
+}
+.tb-cal-n { font-weight: bold; display: block; font-size: 0.77em; color: var(--text-muted); }
+.tb-cal-badge { font-size: 0.69em; margin-top: 2px; }
 .tb-cal-pend { color: var(--text-error); }
 .tb-cal-done { color: var(--text-success); margin-left: 4px; }
 
@@ -149,7 +161,7 @@
   background: var(--background-modifier-error);
   color: var(--text-on-accent);
   border-radius: 4px;
-  font-size: 11px;
+  font-size: 0.85em;
 }
 
 /* —— Task 16 follow-up: missing selectors —— */
@@ -169,7 +181,7 @@
 
 .tb-group-collapse-hint {
   margin-left: auto;
-  font-size: 10px;
+  font-size: 0.77em;
 }
 
 .tb-cal-wrapper {
@@ -179,7 +191,7 @@
 }
 
 .tb-cal-range {
-  font-size: 11px;
+  font-size: 0.85em;
   color: var(--text-muted);
   text-align: center;
   padding: 4px 0;
@@ -193,7 +205,7 @@
 }
 
 .tb-day-detail {
-  font-size: 12px;
+  font-size: 0.92em;
 }
 
 .tb-day-detail-title {

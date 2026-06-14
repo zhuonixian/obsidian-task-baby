@@ -7,9 +7,26 @@ const DOW_LABELS = ['一', '二', '三', '四', '五', '六', '日'];
 
 export function renderCalendarGrid(
   snapshot: IndexSnapshot,
-  onSelectDay: (dayKey: string) => HTMLElement
+  onSelectDay: (dayKey: string) => HTMLElement,
+  initialSelectedKey?: string
 ): HTMLElement {
   const wrapper = h('div', { cls: 'tb-cal-wrapper' });
+
+  // —— detail 容器（提前声明，cell onclick 闭包需要引用）——
+  const detailHolder = h('div', { cls: 'tb-cal-detail-holder' });
+
+  // —— selection 状态 ——
+  const todayKey = dateToYmd(snapshot.windowEnd);
+  let selectedKey = initialSelectedKey ?? todayKey;
+  let selectedCell: HTMLElement | null = null;
+
+  function selectCell(cell: HTMLElement, key: string): void {
+    if (selectedCell) selectedCell.classList.remove('selected');
+    cell.classList.add('selected');
+    selectedCell = cell;
+    selectedKey = key;
+    detailHolder.replaceChildren(onSelectDay(key));
+  }
 
   // —— 范围标签 ——
   const start = snapshot.windowStart;
@@ -45,6 +62,7 @@ export function renderCalendarGrid(
 
     const classes = ['tb-cal-day'];
     if (isSameDay(d, end)) classes.push('today');
+    if (key === selectedKey) classes.push('selected');
     if (pendCount > 0 || doneCount > 0) classes.push('has-tasks');
 
     const cell = h('div', { cls: classes.join(' ') });
@@ -61,17 +79,17 @@ export function renderCalendarGrid(
     }
     cell.appendChild(badge);
 
-    cell.onclick = () => {
-      detailHolder.replaceChildren(onSelectDay(key));
-    };
+    const cellRef = cell;
+    cell.onclick = () => selectCell(cellRef, key);
 
+    if (key === selectedKey) selectedCell = cell;
     grid.appendChild(cell);
   }
   wrapper.appendChild(grid);
-
-  // —— detail 容器 ——
-  const detailHolder = h('div', { cls: 'tb-cal-detail-holder' });
   wrapper.appendChild(detailHolder);
+
+  // —— 初始 detail：渲染选中日的详情 ——
+  detailHolder.replaceChildren(onSelectDay(selectedKey));
 
   return wrapper;
 }
