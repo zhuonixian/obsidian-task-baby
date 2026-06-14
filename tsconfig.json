@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "declaration": false,
+    "outDir": "./dist",
+    "baseUrl": ".",
+    "paths": {
+      "obsidian": ["./__mocks__/obsidian.ts"]
+    },
+    "types": ["jest", "node"]
+  },
+  "include": ["src/**/*", "__mocks__/**/*", "__fixtures__/**/*"],
+  "exclude": ["node_modules", "dist"]
+}
