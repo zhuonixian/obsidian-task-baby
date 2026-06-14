@@ -1,0 +1,153 @@
+/* styles.css */
+.tb-sidebar-root, .tb-board-root {
+  padding: 10px;
+  font-size: 13px;
+}
+
+.tb-sidebar-header, .tb-board-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 8px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--background-modifier-border);
+}
+
+.tb-sidebar-title, .tb-board-title {
+  font-weight: bold;
+}
+
+.tb-sidebar-refresh, .tb-board-refresh {
+  background: var(--background-modifier-border);
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.tb-group { margin-bottom: 14px; }
+.tb-group-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+.tb-group-count {
+  background: var(--background-modifier-border);
+  padding: 1px 6px;
+  border-radius: 8px;
+  font-size: 10px;
+}
+.tb-group-more {
+  font-size: 10px;
+  color: var(--text-muted);
+  text-align: center;
+  padding: 4px;
+}
+
+.tb-task-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 0;
+}
+.tb-task-checkbox { cursor: pointer; flex-shrink: 0; }
+.tb-task-body {
+  flex: 1;
+  cursor: pointer;
+}
+.tb-task-body.tb-done {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+.tb-task-pri {
+  font-size: 11px;
+  padding: 0 2px;
+}
+.tb-pri-highest, .tb-pri-high { color: var(--text-error); }
+.tb-pri-low, .tb-pri-lowest { color: var(--text-muted); }
+.tb-task-src {
+  font-size: 9px;
+  background: var(--background-secondary-alt);
+  padding: 1px 5px;
+  border-radius: 3px;
+  color: var(--text-muted);
+}
+
+.tb-sidebar-open-board {
+  display: block;
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.tb-board-tabs {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+.tb-tab {
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+.tb-tab.active {
+  background: var(--interactive-accent);
+  color: var(--text-on-accent);
+}
+
+.tb-today-grid, .tb-global-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+.tb-global-grid { grid-template-columns: 1fr 1fr; }
+
+.tb-cal-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 3px;
+}
+.tb-cal-dow {
+  text-align: center;
+  font-size: 10px;
+  color: var(--text-muted);
+  padding: 2px 0;
+}
+.tb-cal-day {
+  background: var(--background-secondary);
+  border-radius: 3px;
+  padding: 4px;
+  min-height: 40px;
+  font-size: 11px;
+  cursor: pointer;
+}
+.tb-cal-day.empty { background: transparent; cursor: default; }
+.tb-cal-day.today { outline: 1px solid var(--interactive-accent); }
+.tb-cal-n { font-weight: bold; display: block; font-size: 10px; color: var(--text-muted); }
+.tb-cal-badge { font-size: 9px; margin-top: 2px; }
+.tb-cal-pend { color: var(--text-error); }
+.tb-cal-done { color: var(--text-success); margin-left: 4px; }
+
+.tb-error-bar {
+  margin-top: 10px;
+  padding: 6px 10px;
+  background: var(--background-modifier-error);
+  color: var(--text-on-accent);
+  border-radius: 4px;
+  font-size: 11px;
+}

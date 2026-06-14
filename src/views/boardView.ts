@@ -193,5 +193,16 @@ export class BoardTabView extends ItemView {
 
   private async handleOpen(task: Task): Promise<void> {
     await this.app.workspace.openLinkText(task.sourcePath.replace(/\.md$/, ''), '');
+    // 等待 leaf 渲染后滚动到行
+    setTimeout(() => {
+      const editor = (this.app.workspace as any).activeLeaf?.view?.editor;
+      if (editor && typeof editor.setCursor === 'function') {
+        editor.setCursor({ line: task.lineStart, ch: 0 });
+        editor.scrollIntoView({
+          from: { line: task.lineStart, ch: 0 },
+          to: { line: task.lineStart, ch: 0 }
+        }, true);
+      }
+    }, 100);
   }
 }
