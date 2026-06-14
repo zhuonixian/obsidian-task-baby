@@ -16,7 +16,23 @@ Visualize completed and pending tasks across your daily-note logs.
 
 ## Setup
 
-1. Install from Obsidian community plugins (or clone & build)
+### Option A: Build from source
+
+```bash
+npm install
+npm run build
+# Outputs to dist/task-board/ : main.js + manifest.json + styles.css
+```
+
+Copy the 3 files in `dist/task-board/` to `<vault>/.obsidian/plugins/task-board/`.
+
+### Option B: Install from Obsidian community plugins
+
+*(coming soon — for now, build from source)*
+
+### Configure
+
+1. In Obsidian: Settings → Community plugins → enable **Task Board**
 2. Open Settings → Task Board
 3. Set **Daily dir** to your daily-notes folder (e.g. `DailyLife`)
 4. Set **File pattern** (default `YYYY-MM-DD.md`)
@@ -47,8 +63,8 @@ Standard checkbox + Tasks plugin metadata:
 ```bash
 npm install
 npm test          # run all tests
-npm run dev       # watch build
-npm run build     # production build → main.js
+npm run dev       # watch build → dist/task-board/main.js
+npm run build     # production build → dist/task-board/{main.js,manifest.json,styles.css}
 npm run lint      # typecheck
 ```
 
