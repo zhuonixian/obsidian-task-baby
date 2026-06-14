@@ -6,7 +6,6 @@ const TASK_LINE_RE = /^(\s*)[-*+] \[( |[xX])\] (.+)$/;
 const CODE_FENCE_RE = /^(\s*)(```|~~~)/;
 
 // Emoji patterns
-const DATE_EMOJI_RE = /([\u{1F4C5}\u{23F3}\u{1F6EB}\u{2705}])\s*(\d{4}-\d{2}-\d{2})/u;
 const RECURRENCE_RE = /\u{1F501}\s*([^#\u{1F4C5}\u{23F3}\u{1F6EB}\u{2705}\u{23EB}\u{1F53C}\u{1F53D}\u{23EC}]+)/u;
 const TAG_RE = /#([\w一-龥-]+)/g;
 
@@ -20,8 +19,14 @@ const EMOJI_TO_FIELD: Record<string, keyof Pick<TaskMeta, 'due' | 'scheduled' | 
 function parseDate(s: string): Date | null {
   const m = s.match(/^(\d{4})-(\d{2})-(\d{2})$/);
   if (!m) return null;
-  const d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
-  return isNaN(d.getTime()) ? null : d;
+  const y = +m[1];
+  const mo = +m[2];
+  const d = +m[3];
+  if (mo < 1 || mo > 12 || d < 1 || d > 31) return null;
+  const date = new Date(y, mo - 1, d);
+  // Detect JS Date rollover (e.g., 2026-02-30 → March 2)
+  if (date.getMonth() !== mo - 1 || date.getDate() !== d) return null;
+  return date;
 }
 
 function parseMeta(body: string): { meta: TaskMeta; strippedBody: string } {
@@ -38,7 +43,7 @@ function parseMeta(body: string): { meta: TaskMeta; strippedBody: string } {
     if (strictM) {
       const d = parseDate(strictM[1]);
       if (d) (meta as any)[field] = d;
-      stripped = stripped.replace(re, '');
+      stripped = stripped.replace(new RegExp(re.source, re.flags + 'g'), '');
     } else {
       // 非标日期：剥离 emoji + 紧跟的下一个非空白、非 emoji token
       const looseRe = new RegExp(

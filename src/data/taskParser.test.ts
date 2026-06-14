@@ -159,4 +159,24 @@ describe('TaskParser metadata', () => {
     expect(t.meta?.due).toBeUndefined();
     expect(t.body).toBe('foo');
   });
+
+  test('rejects invalid calendar date 2026-02-30 (Feb rollover)', () => {
+    const t = parseFile('- [ ] foo 📅 2026-02-30', 'p', new Date())[0];
+    expect(t.meta?.due).toBeUndefined();
+    expect(t.body).toBe('foo');
+  });
+
+  test('rejects invalid calendar date 2026-13-45', () => {
+    const t = parseFile('- [ ] foo 📅 2026-13-45', 'p', new Date())[0];
+    expect(t.meta?.due).toBeUndefined();
+    expect(t.body).toBe('foo');
+  });
+
+  test('duplicate due date: first wins, second stripped from body', () => {
+    const t = parseFile('- [ ] foo 📅 2026-06-01 📅 2026-06-30', 'p', new Date())[0];
+    expect(t.meta?.due).toEqual(new Date(2026, 5, 1));
+    // Body should not contain either date emoji (both stripped by looseRe fallback for unmatched 2nd)
+    expect(t.body).not.toContain('📅');
+    expect(t.body).toBe('foo');
+  });
 });
