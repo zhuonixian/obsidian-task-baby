@@ -766,7 +766,7 @@ Expected: FAIL — "Cannot find module './taskParser'"
 import type { Task } from '../types';
 import { textHash, stripMeta } from '../utils/textHash';
 
-const TASK_LINE_RE = /^(\s*)[-*+] \[( |x)\] (.+)$/;
+const TASK_LINE_RE = /^(\s*)[-*+] \[( |[xX])\] (.+)$/;
 const CODE_FENCE_RE = /^(\s*)(```|~~~)/;
 
 export function parseFile(
@@ -774,7 +774,7 @@ export function parseFile(
   sourcePath: string,
   sourceDate: Date
 ): Task[] {
-  const lines = content.split('\n');
+  const lines = content.replace(/\r\n/g, '\n').split('\n');
   const tasks: Task[] = [];
   let inCodeBlock = false;
 
@@ -793,7 +793,7 @@ export function parseFile(
     if (!m) continue;
 
     const indent = m[1].length;
-    const checked = m[2] === 'x';
+    const checked = m[2] === 'x' || m[2] === 'X';
     const body = m[3].trim();
 
     tasks.push({
