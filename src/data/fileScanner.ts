@@ -31,7 +31,12 @@ function patternToRegex(pattern: string): { regex: RegExp; parseFromName: (name:
         if (!m) return null;
         const monthIdx = MONTHS.indexOf(m[1]);
         if (monthIdx < 0) return null;
-        return new Date(Number(m[3]), monthIdx, Number(m[2]));
+        const day = Number(m[2]);
+        if (day < 1 || day > 31) return null;
+        const d = new Date(Number(m[3]), monthIdx, day);
+        // Catch JS Date rollover (e.g., June-31 → July 1)
+        if (d.getMonth() !== monthIdx) return null;
+        return d;
       }
     };
   }

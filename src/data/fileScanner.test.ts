@@ -114,4 +114,21 @@ describe('FileScanner', () => {
     }, new Date(2026, 5, 14));
     expect(result.matched[0].sourceDate).toEqual(new Date(2026, 5, 14));
   });
+
+  test('MMMM pattern rejects invalid days (June-31 rollover)', () => {
+    vault.files = [
+      makeFile('Logs/June-31-2026.md'),
+      makeFile('Logs/June-14-2026.md')
+    ];
+    const result = listDailyFiles(vault, {
+      dailyDir: 'Logs',
+      filePattern: 'MMMM-D-YYYY.md',
+      rangeDays: 30,
+      enableTasksMetadata: true,
+      sidebarCompactLimit: 5,
+      appendDoneDate: true
+    }, new Date(2026, 5, 14));
+    expect(result.matched.map(f => f.file.path)).toEqual(['Logs/June-14-2026.md']);
+    expect(result.unparsed.map(f => f.path)).toContain('Logs/June-31-2026.md');
+  });
 });
