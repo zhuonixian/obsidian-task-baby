@@ -1412,7 +1412,7 @@ describe('buildIndex', () => {
     const today = new Date(2026, 5, 14);
     const idx = buildIndex([], today, 30, []);
     expect(idx.windowEnd).toEqual(today);
-    expect(idx.windowStart).toEqual(new Date(2026, 4, 15));
+    expect(idx.windowStart).toEqual(new Date(2026, 4, 16)); // inclusive window: 5-16 → 6-14 = 30 days
   });
 
   test('同任务在 byDate 和 today.backlog 是同一对象引用', () => {
