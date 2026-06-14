@@ -1,10 +1,4 @@
 // src/utils/domHelpers.test.ts
-import { JSDOM } from 'jsdom';
-
-// 测试环境补 jsdom
-const dom = new JSDOM('<!doctype html><html><body></body></html>');
-(global as any).document = dom.window.document;
-
 import { h } from './domHelpers';
 
 describe('domHelpers.h', () => {
@@ -25,8 +19,8 @@ describe('domHelpers.h', () => {
 
   test('attaches event handler', () => {
     const handler = jest.fn();
-    const el = h('button', { onclick: handler }) as any;
-    el.onclick();
+    const el = h('button', { onclick: handler });
+    el.dispatchEvent(new MouseEvent('click'));
     expect(handler).toHaveBeenCalled();
   });
 
@@ -38,7 +32,7 @@ describe('domHelpers.h', () => {
   });
 
   test('sets attributes via attr', () => {
-    const el = h('a', { attr: { href: '#x', target: '_blank' } }) as any;
+    const el = h('a', { attr: { href: '#x', target: '_blank' } });
     expect(el.getAttribute('href')).toBe('#x');
     expect(el.getAttribute('target')).toBe('_blank');
   });
