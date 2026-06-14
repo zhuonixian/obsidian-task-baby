@@ -79,4 +79,22 @@ describe('TaskParser basics', () => {
     expect(x.bodyHash).toBeTruthy();
     expect(x.bodyHash).toBe(x.bodyHash); // stable
   });
+
+  test('handles CRLF line endings', () => {
+    const crlfContent = '- [ ] 任务A\r\n- [x] 任务B\r\n  - [ ] 子任务\r\n';
+    const tasks = parseFile(crlfContent, 'p', new Date(2026, 5, 14));
+    expect(tasks.length).toBe(3);
+    expect(tasks[0].body).toBe('任务A');
+    expect(tasks[1].body).toBe('任务B');
+    expect(tasks[1].checked).toBe(true);
+    expect(tasks[2].body).toBe('子任务');
+    expect(tasks[2].indent).toBe(2);
+  });
+
+  test('handles uppercase [X] as checked', () => {
+    const tasks = parseFile('- [X] 大写X\n', 'p', new Date(2026, 5, 14));
+    expect(tasks.length).toBe(1);
+    expect(tasks[0].checked).toBe(true);
+    expect(tasks[0].body).toBe('大写X');
+  });
 });
