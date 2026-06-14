@@ -69,3 +69,7 @@ npm run lint      # typecheck
 ```
 
 See `docs/MANUAL_QA.md` for the UI acceptance checklist.
+
+## License
+
+Apache-2.0. See `LICENSE`.

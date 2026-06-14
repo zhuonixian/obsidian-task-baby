@@ -1,6 +1,11 @@
 # Superpowers brainstorm sessions (visual companion mockups, ephemeral)
 .superpowers/
 
+# Local agent / analysis artifacts
+.codex/
+graphify-out/
+AGENTS.md
+
 # Node / build artifacts
 node_modules/
 dist/
