@@ -12,7 +12,9 @@ const SETTINGS: TaskBoardSettings = {
   enableTasksMetadata: true,
   sidebarCompactLimit: 5,
   appendDoneDate: true,
-  fontSize: 13
+  fontSize: 13,
+  reminderEnabled: true,
+  reminderTime: '21:00'
 };
 
 function setupVault(content: string): { vault: Vault; file: TFile } {

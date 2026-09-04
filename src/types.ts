@@ -56,6 +56,8 @@ export interface TaskBoardSettings {
   sidebarCompactLimit: number;
   appendDoneDate: boolean;
   fontSize: number;          // panel base font size in px (default 13)
+  reminderEnabled: boolean;
+  reminderTime: string;      // "HH:mm", invalid fallback 21:00
 }
 
 // —— 错误类型 ——
