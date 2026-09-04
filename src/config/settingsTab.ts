@@ -102,6 +102,31 @@ export class TaskBoardSettingTab extends PluginSettingTab {
         }));
 
     new Setting(containerEl)
+      .setName('每日提醒')
+      .setDesc('每天到提醒时刻自动检查未完成任务并弹出通知')
+      .addToggle(t => t
+        .setValue(this.plugin.settings.reminderEnabled)
+        .onChange(async v => {
+          this.plugin.settings.reminderEnabled = v;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('提醒时刻')
+      .setDesc('每天检查的时刻(HH:mm,默认 21:00;非法输入不保存)')
+      .addText(text => text
+        .setPlaceholder('21:00')
+        .setValue(this.plugin.settings.reminderTime)
+        .onChange(async v => {
+          const trimmed = v.trim();
+          const m = trimmed.match(/^(\d{1,2}):(\d{2})$/);
+          if (!m) return;
+          if (Number(m[1]) > 23 || Number(m[2]) > 59) return;
+          this.plugin.settings.reminderTime = trimmed;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
       .setName('测试匹配')
       .setDesc('预览最近匹配的日志文件，验证配置正确性')
       .addButton(btn => btn
