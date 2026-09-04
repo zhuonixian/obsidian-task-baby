@@ -318,6 +318,8 @@ import type { Vault } from 'obsidian';
 ```
 
 测试:
+
+```typescript
 function makeSettings(overrides: Partial<TaskBoardSettings> = {}): TaskBoardSettings {
   return {
     dailyDir: 'DailyLife',
