@@ -13,6 +13,7 @@ Visualize completed and pending tasks across your daily-note logs.
 - 🔗 **Click to open**: jumps to the source line in the daily note
 - 📅 **Tasks plugin metadata**: parses 📅 ⏳ 🛫 ✅ 🔼 emojis and #tags
 - 🚫 **No data loss**: strict change-detection on write-back
+- ⏰ **Daily reminder**: notice at a configurable time each day for unfinished & due-today tasks
 
 ## Setup
 

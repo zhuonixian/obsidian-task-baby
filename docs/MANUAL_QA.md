@@ -56,6 +56,16 @@ Run this before tagging a release.
 - [ ] Dark theme: looks right
 - [ ] Moonlight theme: looks right
 
+## Daily Reminder
+
+- [ ] Set 提醒时刻 to 1 minute ahead → Notice appears within 1-2 min with counts
+- [ ] After the notice fired, restart Obsidian → no second notice same day
+- [ ] Set 提醒时刻 to a time already past (and not yet fired today) → startup catch-up notice ~10s after layout ready
+- [ ] 每日提醒 off → no notice at reminder time
+- [ ] Notice copy: when one count is 0, only the other is shown
+- [ ] Type invalid time (e.g. `25:99`) → not saved; reopen settings shows last valid value
+- [ ] Empty task day → no notice, but next day still reminds
+
 ## Resize
 
 - [ ] Sidebar dragged to 240px wide: no overflow
