@@ -52,9 +52,10 @@ export default class TaskBoardPlugin extends Plugin {
       notify: (msg: string) => new Notice(msg, 10_000),
       getSnapshot
     };
-    this.registerInterval(60_000, () => {
+    const reminderTimerId = window.setInterval(() => {
       runReminderCheck(this, reminderDeps).catch(console.error);
-    });
+    }, 60_000);
+    this.registerInterval(reminderTimerId);
     this.app.workspace.onLayoutReady(() => {
       setTimeout(() => {
         runReminderCheck(this, reminderDeps).catch(console.error);

@@ -67,7 +67,7 @@ export class Plugin {
   addRibbonIcon(_icon: string, _title: string, _cb: () => void): void {}
   addCommand(_opts: { id: string; name: string; callback?: () => void }): void {}
   addSettingTab(_tab: any): void {}
-  registerInterval(_ms: number, _cb: () => void): void {}
+  registerInterval(_id: number): void {}
 }
 
 export abstract class ItemView {
