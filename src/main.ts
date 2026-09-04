@@ -1,13 +1,17 @@
 // src/main.ts
-import { Plugin, WorkspaceLeaf } from 'obsidian';
+import { Notice, Plugin, WorkspaceLeaf } from 'obsidian';
 import { DEFAULT_SETTINGS } from './config/defaultSettings';
 import { TaskBoardSettingTab } from './config/settingsTab';
 import type { TaskBoardSettings } from './types';
 import { SidebarCompactView, SIDEBAR_VIEW_TYPE } from './views/sidebarView';
 import { BoardTabView, BOARD_VIEW_TYPE } from './views/boardView';
+import { runReminderCheck } from './reminder/reminderService';
+import type { ReminderState } from './reminder/reminderService';
+import { getSnapshot } from './data/snapshotService';
 
 export default class TaskBoardPlugin extends Plugin {
   settings!: TaskBoardSettings;
+  private reminderState: ReminderState = { lastReminderDate: null };
 
   async onload(): Promise<void> {
     await this.loadSettings();
@@ -42,14 +46,40 @@ export default class TaskBoardPlugin extends Plugin {
     });
 
     this.addSettingTab(new TaskBoardSettingTab(this.app, this));
+
+    const reminderDeps = {
+      now: () => new Date(),
+      notify: (msg: string) => new Notice(msg, 10_000),
+      getSnapshot
+    };
+    this.registerInterval(60_000, () => {
+      runReminderCheck(this, reminderDeps).catch(console.error);
+    });
+    this.app.workspace.onLayoutReady(() => {
+      setTimeout(() => {
+        runReminderCheck(this, reminderDeps).catch(console.error);
+      }, 10_000);
+    });
   }
 
   async loadSettings(): Promise<void> {
-    this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    const data = (await this.loadData()) as Record<string, unknown> | null;
+    const { reminderState, ...settingsData } = data ?? {};
+    this.settings = Object.assign({}, DEFAULT_SETTINGS, settingsData);
+    this.reminderState = reminderState as ReminderState || { lastReminderDate: null };
   }
 
   async saveSettings(): Promise<void> {
-    await this.saveData(this.settings);
+    await this.saveData({ ...this.settings, reminderState: this.reminderState });
+  }
+
+  getReminderState(): ReminderState {
+    return this.reminderState;
+  }
+
+  async saveReminderDate(ymd: string): Promise<void> {
+    this.reminderState.lastReminderDate = ymd;
+    await this.saveData({ ...this.settings, reminderState: this.reminderState });
   }
 
   async activateSidebar(): Promise<void> {
