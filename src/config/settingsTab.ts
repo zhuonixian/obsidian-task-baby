@@ -127,6 +127,44 @@ export class TaskBoardSettingTab extends PluginSettingTab {
         }));
 
     new Setting(containerEl)
+      .setName('提醒样式')
+      .setDesc('弹窗(闹钟式,可稍后/完成)或通知条(弹一次即结束,贪睡配置无效)')
+      .addDropdown(d => d
+        .addOption('modal', '弹窗(闹钟式)')
+        .addOption('notice', '通知条')
+        .setValue(this.plugin.settings.reminderStyle)
+        .onChange(async v => {
+          this.plugin.settings.reminderStyle = v as TaskBoardSettings['reminderStyle'];
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('贪睡间隔(分钟)')
+      .setDesc('点「稍后」后隔多少分钟重新提醒(1-120,默认 10;非法输入不保存)')
+      .addText(text => text
+        .setPlaceholder('10')
+        .setValue(String(this.plugin.settings.reminderSnoozeMinutes))
+        .onChange(async v => {
+          const n = Number(v);
+          if (!Number.isInteger(n) || n < 1 || n > 120) return;
+          this.plugin.settings.reminderSnoozeMinutes = n;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
+      .setName('最大贪睡次数')
+      .setDesc('超过后弹窗只显示「今日完成」(0-10,0 = 不可贪睡,默认 3;非法输入不保存)')
+      .addText(text => text
+        .setPlaceholder('3')
+        .setValue(String(this.plugin.settings.reminderMaxSnoozes))
+        .onChange(async v => {
+          const n = Number(v);
+          if (!Number.isInteger(n) || n < 0 || n > 10) return;
+          this.plugin.settings.reminderMaxSnoozes = n;
+          await this.plugin.saveSettings();
+        }));
+
+    new Setting(containerEl)
       .setName('测试匹配')
       .setDesc('预览最近匹配的日志文件，验证配置正确性')
       .addButton(btn => btn
