@@ -66,6 +66,17 @@ Run this before tagging a release.
 - [ ] Type invalid time (e.g. `25:99`) → not saved; reopen settings shows last valid value
 - [ ] Empty task day → no notice, but next day still reminds
 
+### Snooze & Dismiss (modal style)
+
+- [ ] Set 提醒时刻 1 min ahead + 贪睡间隔 1 min → modal appears with 「稍后 1 分钟(还可 3 次)」 and 「今日完成」
+- [ ] Click 稍后 → re-appears after ~1 min, remaining count decreases
+- [ ] Exhaust all snoozes → modal shows only 「今日完成」
+- [ ] ESC / click backdrop → treated as 今日完成, no more popups today
+- [ ] Snooze → restart Obsidian → modal still appears at snooze expiry
+- [ ] Switch 提醒样式 to 通知条 → v1 behavior (single notice, finalized)
+- [ ] Set 最大贪睡次数 to 0 → first modal shows only 「今日完成」
+- [ ] Old data.json (only lastReminderDate) → upgrade keeps behavior (already-finalized day stays silent)
+
 ## Resize
 
 - [ ] Sidebar dragged to 240px wide: no overflow
