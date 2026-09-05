@@ -158,6 +158,7 @@ export class TaskBoardSettingTab extends PluginSettingTab {
         .setPlaceholder('3')
         .setValue(String(this.plugin.settings.reminderMaxSnoozes))
         .onChange(async v => {
+          if (v.trim() === '') return;
           const n = Number(v);
           if (!Number.isInteger(n) || n < 0 || n > 10) return;
           this.plugin.settings.reminderMaxSnoozes = n;

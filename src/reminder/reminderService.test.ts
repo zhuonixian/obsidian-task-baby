@@ -255,6 +255,23 @@ describe('runReminderCheck', () => {
     expect(last.finalized).toBe(false);
   });
 
+  test('modal:onSnooze 在点击时刻起算 until(弹窗停留 5 分钟后点击 → 22:15 而非 22:10)', async () => {
+    const host = makeHost();
+    const currentNow = { value: new Date(2026, 8, 5, 22, 0) };
+    const snapshot = buildIndex([todayTask()], currentNow.value, 30, []);
+    const deps = {
+      now: () => currentNow.value,
+      notify: jest.fn(),
+      presentModal: jest.fn(),
+      getSnapshot: jest.fn().mockResolvedValue(snapshot)
+    };
+    await runReminderCheck(host, deps as any);
+    currentNow.value = new Date(2026, 8, 5, 22, 5);   // 用户在弹窗停留 5 分钟后点击
+    deps.presentModal.mock.calls[0][0].onSnooze();
+    const last = (host.saveReminderState as jest.Mock).mock.calls.at(-1)[0] as ReminderState;
+    expect(last.snoozedUntil).toBe(new Date(2026, 8, 5, 22, 15).toISOString());
+  });
+
   test('modal:onFinal 回调 → finalized 且贪睡/守卫清空', async () => {
     const host = makeHost();
     const deps = makeDeps({ tasks: [todayTask()] });

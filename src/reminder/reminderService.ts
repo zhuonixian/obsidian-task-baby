@@ -130,7 +130,7 @@ export async function runReminderCheck(
     snoozeRemaining: Math.max(0, settings.reminderMaxSnoozes - base.snoozeCount),
     snoozeMinutes: settings.reminderSnoozeMinutes,
     onSnooze: () => {
-      const until = new Date(now.getTime() + settings.reminderSnoozeMinutes * 60_000);
+      const until = new Date(deps.now().getTime() + settings.reminderSnoozeMinutes * 60_000);
       host.saveReminderState({
         ...base,
         snoozeCount: base.snoozeCount + 1,
