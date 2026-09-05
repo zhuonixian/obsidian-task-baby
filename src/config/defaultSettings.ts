@@ -10,5 +10,8 @@ export const DEFAULT_SETTINGS: TaskBoardSettings = {
   appendDoneDate: true,
   fontSize: 13,
   reminderEnabled: true,
-  reminderTime: '21:00'
+  reminderTime: '21:00',
+  reminderStyle: 'modal',
+  reminderSnoozeMinutes: 10,
+  reminderMaxSnoozes: 3
 };

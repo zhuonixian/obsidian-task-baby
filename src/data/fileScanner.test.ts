@@ -30,7 +30,10 @@ describe('FileScanner', () => {
       appendDoneDate: true,
       fontSize: 13,
       reminderEnabled: true,
-      reminderTime: '21:00'
+      reminderTime: '21:00',
+      reminderStyle: 'notice',
+      reminderSnoozeMinutes: 10,
+      reminderMaxSnoozes: 3,
     }, new Date(2026, 5, 14));
     expect(result.matched.map(f => f.file.path)).toEqual([
       'DailyLife/2026/06/2026-06-13.md',
@@ -53,7 +56,10 @@ describe('FileScanner', () => {
       appendDoneDate: true,
       fontSize: 13,
       reminderEnabled: true,
-      reminderTime: '21:00'
+      reminderTime: '21:00',
+      reminderStyle: 'notice',
+      reminderSnoozeMinutes: 10,
+      reminderMaxSnoozes: 3,
     }, new Date(2026, 5, 14));
     expect(result.matched.map(f => f.file.path)).toEqual(['DailyLife/2026/06/2026-06-14.md']);
   });
@@ -73,7 +79,10 @@ describe('FileScanner', () => {
       appendDoneDate: true,
       fontSize: 13,
       reminderEnabled: true,
-      reminderTime: '21:00'
+      reminderTime: '21:00',
+      reminderStyle: 'notice',
+      reminderSnoozeMinutes: 10,
+      reminderMaxSnoozes: 3,
     }, new Date(2026, 5, 14));
     const paths = result.matched.map(f => f.file.path);
     expect(paths).toContain('DailyLife/2026/06/2026-06-14.md');
@@ -95,7 +104,10 @@ describe('FileScanner', () => {
       appendDoneDate: true,
       fontSize: 13,
       reminderEnabled: true,
-      reminderTime: '21:00'
+      reminderTime: '21:00',
+      reminderStyle: 'notice',
+      reminderSnoozeMinutes: 10,
+      reminderMaxSnoozes: 3,
     }, new Date(2026, 5, 14));
     expect(result.matched.map(f => f.file.path)).toEqual(['Logs/June-14-2026.md']);
   });
@@ -111,7 +123,10 @@ describe('FileScanner', () => {
       appendDoneDate: true,
       fontSize: 13,
       reminderEnabled: true,
-      reminderTime: '21:00'
+      reminderTime: '21:00',
+      reminderStyle: 'notice',
+      reminderSnoozeMinutes: 10,
+      reminderMaxSnoozes: 3,
     }, new Date(2026, 5, 14));
     expect(result.matched).toEqual([]);
     expect(result.unparsed).toEqual([]);
@@ -128,7 +143,10 @@ describe('FileScanner', () => {
       appendDoneDate: true,
       fontSize: 13,
       reminderEnabled: true,
-      reminderTime: '21:00'
+      reminderTime: '21:00',
+      reminderStyle: 'notice',
+      reminderSnoozeMinutes: 10,
+      reminderMaxSnoozes: 3,
     }, new Date(2026, 5, 14));
     expect(result.matched[0].sourceDate).toEqual(new Date(2026, 5, 14));
   });
@@ -147,7 +165,10 @@ describe('FileScanner', () => {
       appendDoneDate: true,
       fontSize: 13,
       reminderEnabled: true,
-      reminderTime: '21:00'
+      reminderTime: '21:00',
+      reminderStyle: 'notice',
+      reminderSnoozeMinutes: 10,
+      reminderMaxSnoozes: 3,
     }, new Date(2026, 5, 14));
     expect(result.matched.map(f => f.file.path)).toEqual(['Logs/June-14-2026.md']);
     expect(result.unparsed.map(f => f.path)).toContain('Logs/June-31-2026.md');

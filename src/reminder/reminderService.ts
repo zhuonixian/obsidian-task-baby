@@ -2,8 +2,10 @@
 import { dateToYmd, isSameDay } from '../utils/dateUtils';
 import type { IndexSnapshot, TaskBoardSettings } from '../types';
 import type { Vault } from 'obsidian';
+import type { PresentModalOptions } from './reminderModal';
 
 const DEFAULT_REMINDER_TIME = '21:00';
+const POPUP_GUARD_MS = 120_000;
 
 function parseTimeHHmm(s: string): { h: number; m: number } | null {
   const match = s.match(/^(\d{1,2}):(\d{2})$/);
@@ -14,17 +16,7 @@ function parseTimeHHmm(s: string): { h: number; m: number } | null {
   return { h, m };
 }
 
-export function shouldRemind(
-  now: Date,
-  reminderTime: string,
-  lastReminderDate: string | null
-): boolean {
-  const t = parseTimeHHmm(reminderTime) ?? parseTimeHHmm(DEFAULT_REMINDER_TIME)!;
-  const reminderAt = new Date(now.getFullYear(), now.getMonth(), now.getDate(), t.h, t.m);
-  if (now.getTime() < reminderAt.getTime()) return false;
-  return dateToYmd(now) !== lastReminderDate;
-}
-
+// ============ summarize 原样保留(与现版本一致) ============
 export interface ReminderSummary {
   pendingToday: number;
   dueToday: number;
@@ -40,21 +32,57 @@ export function summarize(snapshot: IndexSnapshot, today: Date): ReminderSummary
   }).length;
   return { pendingToday, dueToday };
 }
+// ============ 保留区结束 ============
 
 export interface ReminderState {
-  lastReminderDate: string | null;
+  dayKey: string | null;
+  finalized: boolean;
+  snoozeCount: number;
+  snoozedUntil: string | null;
+  lastPopupAt: string | null;
+}
+
+export type ReminderDecision = 'skip' | 'remind' | 'notice';
+
+export function evaluateReminder(
+  now: Date,
+  settings: TaskBoardSettings,
+  state: ReminderState
+): ReminderDecision {
+  const t = parseTimeHHmm(settings.reminderTime) ?? parseTimeHHmm(DEFAULT_REMINDER_TIME)!;
+  const reminderAt = new Date(now.getFullYear(), now.getMonth(), now.getDate(), t.h, t.m);
+  if (now.getTime() < reminderAt.getTime()) return 'skip';
+
+  const fresh = state.dayKey !== dateToYmd(now);
+  if (fresh) {
+    return settings.reminderStyle === 'notice' ? 'notice' : 'remind';
+  }
+  if (state.finalized) return 'skip';
+  if (state.snoozedUntil && now.getTime() < new Date(state.snoozedUntil).getTime()) return 'skip';
+  if (state.lastPopupAt && now.getTime() < new Date(state.lastPopupAt).getTime() + POPUP_GUARD_MS) return 'skip';
+  return settings.reminderStyle === 'notice' ? 'notice' : 'remind';
+}
+
+export function buildReminderMessage(s: ReminderSummary): string | null {
+  if (s.pendingToday > 0 && s.dueToday > 0) {
+    return `⏰ 今日还有 ${s.pendingToday} 件未完成 · ${s.dueToday} 件今日到期`;
+  }
+  if (s.pendingToday > 0) return `⏰ 今日还有 ${s.pendingToday} 件未完成`;
+  if (s.dueToday > 0) return `⏰ 今日有 ${s.dueToday} 件到期任务`;
+  return null;
 }
 
 export interface ReminderHost {
   settings: TaskBoardSettings;
   app: { vault: Vault };
   getReminderState(): ReminderState;
-  saveReminderDate(ymd: string): Promise<void>;
+  saveReminderState(state: ReminderState): Promise<void>;
 }
 
 export interface ReminderDeps {
   now(): Date;
   notify(message: string): void;
+  presentModal(options: PresentModalOptions): void;
   getSnapshot(
     vault: Vault,
     settings: TaskBoardSettings,
@@ -69,20 +97,54 @@ export async function runReminderCheck(
   if (!host.settings.reminderEnabled) return;
 
   const now = deps.now();
-  if (!shouldRemind(now, host.settings.reminderTime, host.getReminderState().lastReminderDate)) {
-    return;
-  }
+  const decision = evaluateReminder(now, host.settings, host.getReminderState());
+  if (decision === 'skip') return;
 
   const snapshot = await deps.getSnapshot(host.app.vault, host.settings, now);
   if (snapshot.errors.length > 0) return;
 
-  const { pendingToday, dueToday } = summarize(snapshot, now);
-  if (pendingToday > 0 && dueToday > 0) {
-    deps.notify(`⏰ 今日还有 ${pendingToday} 件未完成 · ${dueToday} 件今日到期`);
-  } else if (pendingToday > 0) {
-    deps.notify(`⏰ 今日还有 ${pendingToday} 件未完成`);
-  } else if (dueToday > 0) {
-    deps.notify(`⏰ 今日有 ${dueToday} 件到期任务`);
+  const message = buildReminderMessage(summarize(snapshot, now));
+
+  const today = dateToYmd(now);
+  const raw = host.getReminderState();
+  const base: ReminderState = raw.dayKey === today
+    ? raw
+    : { dayKey: today, finalized: false, snoozeCount: 0, snoozedUntil: null, lastPopupAt: null };
+
+  if (message === null) {
+    await host.saveReminderState({ ...base, finalized: true });
+    return;
   }
-  await host.saveReminderDate(dateToYmd(now));
+
+  if (decision === 'notice') {
+    deps.notify(message);
+    await host.saveReminderState({ ...base, finalized: true });
+    return;
+  }
+
+  await host.saveReminderState({ ...base, lastPopupAt: now.toISOString() });
+
+  const settings = host.settings;
+  deps.presentModal({
+    message,
+    snoozeRemaining: Math.max(0, settings.reminderMaxSnoozes - base.snoozeCount),
+    snoozeMinutes: settings.reminderSnoozeMinutes,
+    onSnooze: () => {
+      const until = new Date(now.getTime() + settings.reminderSnoozeMinutes * 60_000);
+      host.saveReminderState({
+        ...base,
+        snoozeCount: base.snoozeCount + 1,
+        snoozedUntil: until.toISOString(),
+        lastPopupAt: null
+      }).catch(console.error);
+    },
+    onFinal: () => {
+      host.saveReminderState({
+        ...base,
+        finalized: true,
+        snoozedUntil: null,
+        lastPopupAt: null
+      }).catch(console.error);
+    }
+  });
 }

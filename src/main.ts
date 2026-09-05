@@ -7,11 +7,19 @@ import { SidebarCompactView, SIDEBAR_VIEW_TYPE } from './views/sidebarView';
 import { BoardTabView, BOARD_VIEW_TYPE } from './views/boardView';
 import { runReminderCheck } from './reminder/reminderService';
 import type { ReminderState } from './reminder/reminderService';
+import { ReminderModal } from './reminder/reminderModal';
+import type { PresentModalOptions } from './reminder/reminderModal';
 import { getSnapshot } from './data/snapshotService';
 
 export default class TaskBoardPlugin extends Plugin {
   settings!: TaskBoardSettings;
-  private reminderState: ReminderState = { lastReminderDate: null };
+  private reminderState: ReminderState = {
+    dayKey: null,
+    finalized: false,
+    snoozeCount: 0,
+    snoozedUntil: null,
+    lastPopupAt: null
+  };
 
   async onload(): Promise<void> {
     await this.loadSettings();
@@ -50,6 +58,8 @@ export default class TaskBoardPlugin extends Plugin {
     const reminderDeps = {
       now: () => new Date(),
       notify: (msg: string) => new Notice(msg, 10_000),
+      presentModal: (options: PresentModalOptions) =>
+        new ReminderModal(this.app, options).open(),
       getSnapshot
     };
     const reminderTimerId = window.setInterval(() => {
@@ -67,7 +77,32 @@ export default class TaskBoardPlugin extends Plugin {
     const data = (await this.loadData()) as Record<string, unknown> | null;
     const { reminderState, ...settingsData } = data ?? {};
     this.settings = Object.assign({}, DEFAULT_SETTINGS, settingsData);
-    this.reminderState = reminderState as ReminderState || { lastReminderDate: null };
+    this.reminderState = this.migrateReminderState(reminderState);
+  }
+
+  private migrateReminderState(raw: unknown): ReminderState {
+    const fresh: ReminderState = {
+      dayKey: null,
+      finalized: false,
+      snoozeCount: 0,
+      snoozedUntil: null,
+      lastPopupAt: null
+    };
+    if (!raw || typeof raw !== 'object') return fresh;
+    const r = raw as Record<string, unknown>;
+    if (typeof r.dayKey === 'string' || r.dayKey === null) {
+      return {
+        dayKey: (r.dayKey as string | null) ?? null,
+        finalized: typeof r.finalized === 'boolean' ? r.finalized : false,
+        snoozeCount: typeof r.snoozeCount === 'number' ? r.snoozeCount : 0,
+        snoozedUntil: typeof r.snoozedUntil === 'string' ? r.snoozedUntil : null,
+        lastPopupAt: typeof r.lastPopupAt === 'string' ? r.lastPopupAt : null
+      };
+    }
+    if (typeof r.lastReminderDate === 'string' && r.lastReminderDate) {
+      return { ...fresh, dayKey: r.lastReminderDate, finalized: true };
+    }
+    return fresh;
   }
 
   async saveSettings(): Promise<void> {
@@ -78,9 +113,9 @@ export default class TaskBoardPlugin extends Plugin {
     return this.reminderState;
   }
 
-  async saveReminderDate(ymd: string): Promise<void> {
-    this.reminderState.lastReminderDate = ymd;
-    await this.saveData({ ...this.settings, reminderState: this.reminderState });
+  async saveReminderState(state: ReminderState): Promise<void> {
+    this.reminderState = state;
+    await this.saveData({ ...this.settings, reminderState: state });
   }
 
   async activateSidebar(): Promise<void> {

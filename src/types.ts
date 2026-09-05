@@ -58,6 +58,9 @@ export interface TaskBoardSettings {
   fontSize: number;          // panel base font size in px (default 13)
   reminderEnabled: boolean;
   reminderTime: string;      // "HH:mm", invalid fallback 21:00
+  reminderStyle: 'modal' | 'notice';
+  reminderSnoozeMinutes: number;  // 1-120, default 10
+  reminderMaxSnoozes: number;     // 0-10, 0 = no snooze button, default 3
 }
 
 // —— 错误类型 ——
