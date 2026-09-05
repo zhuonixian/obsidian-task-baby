@@ -4,7 +4,7 @@ module.exports = {
       displayName: 'node',
       testEnvironment: 'node',
       testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/__fixtures__/**/*.test.ts'],
-      testPathIgnorePatterns: ['<rootDir>/src/utils/domHelpers.test.ts'],
+      testPathIgnorePatterns: ['<rootDir>/src/utils/domHelpers.test.ts', '<rootDir>/src/reminder/reminderModal.test.ts'],
       moduleNameMapper: { '^obsidian$': '<rootDir>/__mocks__/obsidian.ts' },
       transform: { '^.+\\.ts$': 'ts-jest' },
       clearMocks: true
@@ -12,7 +12,7 @@ module.exports = {
     {
       displayName: 'jsdom',
       testEnvironment: 'jsdom',
-      testMatch: ['<rootDir>/src/utils/domHelpers.test.ts', '<rootDir>/src/views/**/*.test.ts'],
+      testMatch: ['<rootDir>/src/utils/domHelpers.test.ts', '<rootDir>/src/views/**/*.test.ts', '<rootDir>/src/reminder/reminderModal.test.ts'],
       moduleNameMapper: { '^obsidian$': '<rootDir>/__mocks__/obsidian.ts' },
       setupFiles: ['<rootDir>/jest.setup-jsdom.ts'],
       transform: { '^.+\\.ts$': 'ts-jest' },

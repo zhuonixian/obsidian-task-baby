@@ -217,3 +217,19 @@
 .tb-cal-day.has-tasks {
   font-weight: bold;
 }
+
+/* —— Reminder modal —— */
+.tb-reminder-message {
+  font-size: 1.05em;
+  margin: 0.4em 0 0.8em;
+}
+
+.tb-reminder-buttons {
+  display: flex;
+  gap: 0.6em;
+  justify-content: flex-end;
+}
+
+.tb-reminder-buttons button {
+  cursor: pointer;
+}
