@@ -57,6 +57,7 @@ Standard checkbox + Tasks plugin metadata:
 ```markdown
 - [ ] Learn Rust 📅 2026-06-20 🔼 #study
 - [x] Morning coffee ✅ 2026-06-14
+1. [ ] Ordered-list tasks work too
 ```
 
 ## Development

@@ -125,3 +125,20 @@ describe('TaskWriter.toggle', () => {
       .rejects.toThrow();
   });
 });
+
+describe('TaskWriter.toggle ordered list', () => {
+  test('勾选有序任务:保留 1. 前缀', async () => {
+    const { vault, file } = setupVault('1. [ ] 开放任务\n');
+    const task = makeTask(0, '开放任务', '开放任务', false, file.path);
+    await toggleTask(vault, task, SETTINGS, new Date(2026, 5, 14));
+    expect(vault.contents[file.path]).toMatch(/1\. \[x\] 开放任务 ✅ 2026-06-14/);
+  });
+
+  test('取消有序任务:1. [x] → 1. [ ]', async () => {
+    const { vault, file } = setupVault('2. [x] 编码任务 ✅ 2026-06-14\n');
+    const task = makeTask(0, '编码任务', '编码任务', true, file.path);
+    await toggleTask(vault, task, SETTINGS, new Date(2026, 5, 14));
+    expect(vault.contents[file.path]).toMatch(/2\. \[ \] 编码任务/);
+    expect(vault.contents[file.path]).not.toMatch(/✅/);
+  });
+});

@@ -2,7 +2,7 @@
 import type { Task, TaskMeta, Priority } from '../types';
 import { textHash, stripMeta, PRIORITY_EMOJI } from '../utils/textHash';
 
-const TASK_LINE_RE = /^(\s*)[-*+] \[( |[xX])\] (.+)$/;
+const TASK_LINE_RE = /^(\s*)(?:[-*+]|\d+[.)]) \[( |[xX])\] (.+)$/;
 const CODE_FENCE_RE = /^(\s*)(```|~~~)/;
 
 // Emoji patterns

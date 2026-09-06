@@ -5,11 +5,11 @@ import { TaskBodyChangedError, TaskLineChangedError } from '../types';
 import { stripMeta, textHash } from '../utils/textHash';
 import { formatYmd } from '../utils/dateUtils';
 
-// 匹配整行任务，与 taskParser 的 TASK_LINE_RE 保持一致（同时支持小写 x 和大写 X）
-// group[1]: 缩进 + "- ["
+// 匹配整行任务，与 taskParser 的 TASK_LINE_RE 保持一致（子弹 -/*/+ 与有序 1./1)）
+// group[1]: 缩进 + 标记 + " ["
 // group[2]: 复选框标记 " " | "x" | "X"
 // group[3]: "] " + 正文（不含 "] " 前缀的纯正文）
-const TASK_LINE_RE = /^(\s*[-*+] \[)( |x|X)\] (.*)$/;
+const TASK_LINE_RE = /^(\s*(?:[-*+]|\d+[.)]) \[)( |x|X)\] (.*)$/;
 
 // ✅ 完成日期 emoji：用于取消勾选时清理
 const DONE_EMOJI_RE = /\s+✅\s*\d{4}-\d{2}-\d{2}/;

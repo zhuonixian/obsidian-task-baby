@@ -201,3 +201,39 @@ describe('TaskParser enableTasksMetadata flag', () => {
     expect(tasks[0].meta?.tags).toEqual(['p1']);
   });
 });
+
+describe('TaskParser ordered list checkboxes', () => {
+  const content = [
+    '1. [ ] 开放任务',
+    '2. [x] 编码任务',
+    '10. [ ] 多位序号',
+    '3) [ ] 括号序号',
+    '  4. [ ] 缩进有序'
+  ].join('\n');
+
+  const parse = () => parseFile(content, 'p', new Date(2026, 5, 14));
+
+  test('识别 1. [ ] 有序复选框及状态', () => {
+    const tasks = parse();
+    const open = tasks.find(t => t.body === '开放任务');
+    const done = tasks.find(t => t.body === '编码任务');
+    expect(open?.checked).toBe(false);
+    expect(done?.checked).toBe(true);
+  });
+
+  test('支持多位序号与括号序号', () => {
+    const tasks = parse();
+    expect(tasks.map(t => t.body)).toContain('多位序号');
+    expect(tasks.map(t => t.body)).toContain('括号序号');
+  });
+
+  test('保留缩进', () => {
+    const indented = parse().find(t => t.body === '缩进有序');
+    expect(indented?.indent).toBe(2);
+  });
+
+  test('行号定位正确', () => {
+    const open = parse().find(t => t.body === '开放任务');
+    expect(open?.lineStart).toBe(0);
+  });
+});
