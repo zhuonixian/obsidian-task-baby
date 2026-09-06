@@ -76,6 +76,7 @@ Run this before tagging a release.
 - [ ] Switch 提醒样式 to 通知条 → v1 behavior (single notice, finalized)
 - [ ] Set 最大贪睡次数 to 0 → first modal shows only 「今日完成」
 - [ ] Old data.json (only lastReminderDate) → upgrade keeps behavior (already-finalized day stays silent)
+- [ ] Settings → 预览提醒弹窗 → modal shows with real counts; snooze/final buttons show 预览模式 notices and do NOT change today's schedule
 
 ## Resize
 

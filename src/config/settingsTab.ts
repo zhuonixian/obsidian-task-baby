@@ -1,8 +1,11 @@
 // src/config/settingsTab.ts
-import { App, Modal, PluginSettingTab, Setting, TFile } from 'obsidian';
+import { App, Modal, Notice, PluginSettingTab, Setting, TFile } from 'obsidian';
 import type TaskBoardPlugin from '../main';
 import type { TaskBoardSettings } from '../types';
 import { listDailyFiles } from '../data/fileScanner';
+import { getSnapshot } from '../data/snapshotService';
+import { summarize, buildReminderMessage } from '../reminder/reminderService';
+import { ReminderModal } from '../reminder/reminderModal';
 
 export class TaskBoardSettingTab extends PluginSettingTab {
   plugin: TaskBoardPlugin;
@@ -171,6 +174,34 @@ export class TaskBoardSettingTab extends PluginSettingTab {
       .addButton(btn => btn
         .setButtonText('预览最近 5 个匹配')
         .onClick(() => this.showPreview()));
+
+    new Setting(containerEl)
+      .setName('预览提醒弹窗')
+      .setDesc('立即弹出提醒弹窗(基于当前任务计数),按钮不生效、不影响今日提醒调度')
+      .addButton(btn => btn
+        .setButtonText('预览弹窗')
+        .onClick(() => this.showReminderPreview()));
+  }
+
+  private async showReminderPreview(): Promise<void> {
+    const now = new Date();
+    const snapshot = await getSnapshot(this.app.vault, this.plugin.settings, now);
+    if (snapshot.errors.length > 0) {
+      new Notice(`⚠ ${snapshot.errors.length} 个文件解析失败,请先检查日志配置`, 5000);
+      return;
+    }
+    const message = buildReminderMessage(summarize(snapshot, now));
+    if (message === null) {
+      new Notice('当前扫描不到未完成/今日到期任务——请先用「测试匹配」确认日志目录配置', 8000);
+      return;
+    }
+    new ReminderModal(this.app, {
+      message,
+      snoozeRemaining: Math.max(0, this.plugin.settings.reminderMaxSnoozes),
+      snoozeMinutes: this.plugin.settings.reminderSnoozeMinutes,
+      onSnooze: () => new Notice('预览模式:「稍后」不会生效', 3000),
+      onFinal: () => new Notice('预览模式:「今日完成」不会生效', 3000)
+    }).open();
   }
 
   private showPreview(): void {
