@@ -112,6 +112,7 @@ export class TaskBoardSettingTab extends PluginSettingTab {
         .onChange(async v => {
           this.plugin.settings.reminderEnabled = v;
           await this.plugin.saveSettings();
+          await this.plugin.resetReminderSchedule();
         }));
 
     new Setting(containerEl)
@@ -127,6 +128,7 @@ export class TaskBoardSettingTab extends PluginSettingTab {
           if (Number(m[1]) > 23 || Number(m[2]) > 59) return;
           this.plugin.settings.reminderTime = trimmed;
           await this.plugin.saveSettings();
+          await this.plugin.resetReminderSchedule();
         }));
 
     new Setting(containerEl)
@@ -139,6 +141,7 @@ export class TaskBoardSettingTab extends PluginSettingTab {
         .onChange(async v => {
           this.plugin.settings.reminderStyle = v as TaskBoardSettings['reminderStyle'];
           await this.plugin.saveSettings();
+          await this.plugin.resetReminderSchedule();
         }));
 
     new Setting(containerEl)

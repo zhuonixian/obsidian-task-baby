@@ -118,6 +118,18 @@ export default class TaskBoardPlugin extends Plugin {
     await this.saveData({ ...this.settings, reminderState: state });
   }
 
+  // 用户改变调度意图(时刻/开关/样式)时,当天终态不再合理,重置让新设置立即生效
+  async resetReminderSchedule(): Promise<void> {
+    this.reminderState = {
+      dayKey: null,
+      finalized: false,
+      snoozeCount: 0,
+      snoozedUntil: null,
+      lastPopupAt: null
+    };
+    await this.saveData({ ...this.settings, reminderState: this.reminderState });
+  }
+
   async activateSidebar(): Promise<void> {
     const existing = this.app.workspace.getLeavesOfType(SIDEBAR_VIEW_TYPE);
     if (existing.length > 0) {
