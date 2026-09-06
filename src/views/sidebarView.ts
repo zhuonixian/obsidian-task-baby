@@ -7,7 +7,7 @@ import { toggleTask } from '../data/taskWriter';
 import { h } from '../utils/domHelpers';
 import { renderGroupSection } from './components/groupSection';
 
-export const SIDEBAR_VIEW_TYPE = 'task-board-sidebar';
+export const SIDEBAR_VIEW_TYPE = 'taskbaby-sidebar';
 
 export class SidebarCompactView extends ItemView {
   plugin: TaskBoardPlugin;
@@ -19,7 +19,7 @@ export class SidebarCompactView extends ItemView {
   }
 
   getViewType() { return SIDEBAR_VIEW_TYPE; }
-  getDisplayText() { return 'Task Board'; }
+  getDisplayText() { return 'TaskBaby'; }
   getIcon() { return 'list-checks'; }
 
   async onOpen(): Promise<void> {

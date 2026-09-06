@@ -4,7 +4,7 @@ Run this before tagging a release.
 
 ## Install & First Run
 
-- [ ] Copy `main.js`, `manifest.json`, `styles.css` into `.obsidian/plugins/task-board/`
+- [ ] Copy `main.js`, `manifest.json`, `styles.css` into `.obsidian/plugins/task-baby/`
 - [ ] Enable plugin in Settings → Community plugins
 - [ ] Two ribbon icons appear: `list-checks` and `layout-dashboard`
 

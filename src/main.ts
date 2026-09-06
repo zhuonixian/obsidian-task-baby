@@ -27,29 +27,29 @@ export default class TaskBoardPlugin extends Plugin {
     this.registerView(SIDEBAR_VIEW_TYPE, leaf => new SidebarCompactView(leaf, this));
     this.registerView(BOARD_VIEW_TYPE, leaf => new BoardTabView(leaf, this));
 
-    this.addRibbonIcon('list-checks', 'Task Board (Sidebar)', () => {
+    this.addRibbonIcon('list-checks', 'TaskBaby (Sidebar)', () => {
       this.activateSidebar();
     });
 
-    this.addRibbonIcon('layout-dashboard', 'Task Board (Full)', () => {
+    this.addRibbonIcon('layout-dashboard', 'TaskBaby (Full)', () => {
       this.activateBoard();
     });
 
     this.addCommand({
-      id: 'open-task-board-sidebar',
+      id: 'open-taskbaby-sidebar',
       name: 'Open compact panel in sidebar',
       callback: () => this.activateSidebar()
     });
 
     this.addCommand({
-      id: 'open-task-board-tab',
+      id: 'open-taskbaby-tab',
       name: 'Open full board in tab',
       callback: () => this.activateBoard()
     });
 
     this.addCommand({
-      id: 'refresh-task-board',
-      name: 'Refresh task board',
+      id: 'refresh-taskbaby',
+      name: 'Refresh TaskBaby',
       callback: () => this.refreshAllViews()
     });
 

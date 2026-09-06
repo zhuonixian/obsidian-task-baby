@@ -8,7 +8,7 @@ import { h } from '../utils/domHelpers';
 import { renderGroupSection } from './components/groupSection';
 import { renderCalendarGrid } from './components/calendarGrid';
 
-export const BOARD_VIEW_TYPE = 'task-board-board';
+export const BOARD_VIEW_TYPE = 'taskbaby-board';
 
 type ViewMode = 'today' | 'calendar' | 'global';
 
@@ -23,7 +23,7 @@ export class BoardTabView extends ItemView {
   }
 
   getViewType() { return BOARD_VIEW_TYPE; }
-  getDisplayText() { return 'Task Board'; }
+  getDisplayText() { return 'TaskBaby'; }
   getIcon() { return 'layout-dashboard'; }
 
   async onOpen(): Promise<void> {
