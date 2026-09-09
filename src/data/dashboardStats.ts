@@ -16,8 +16,9 @@ export function computeDashboardStats(snapshot: IndexSnapshot, now: Date): Dashb
 
   // —— due 分组（日粒度零点比较）——
   const today0 = dayStart(now).getTime();
-  const dayMs = 24 * 60 * 60 * 1000;
-  const limit7 = today0 + 7 * dayMs;
+  const limit7Date = new Date(today0);
+  limit7Date.setDate(limit7Date.getDate() + 7);
+  const limit7 = limit7Date.getTime();
 
   const overdue: Task[] = [];
   const dueToday: Task[] = [];
@@ -31,7 +32,7 @@ export function computeDashboardStats(snapshot: IndexSnapshot, now: Date): Dashb
     else if (d0 <= limit7) dueNext7Days.push(t);
   }
   const byDueAsc = (a: Task, b: Task) =>
-    dayStart(a.meta!.due!).getTime() - dayStart(b.meta!.due!).getTime();
+    (a.meta?.due?.getTime() ?? 0) - (b.meta?.due?.getTime() ?? 0);
   overdue.sort(byDueAsc);
   dueNext7Days.sort(byDueAsc);
 
@@ -66,7 +67,7 @@ export function computeDashboardStats(snapshot: IndexSnapshot, now: Date): Dashb
     overdue,
     dueToday,
     dueNext7Days,
-    doneTodayTasks: done,
+    doneTodayTasks: [...done],
     dailyDone,
     totalDone30d,
     avgPerDay: Math.round((totalDone30d / heatmapDays) * 10) / 10

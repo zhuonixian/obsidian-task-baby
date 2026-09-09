@@ -112,3 +112,13 @@ describe('computeDashboardStats — 热力图', () => {
     expect(s.dailyDone[6].dateKey).toBe('2026-09-10');
   });
 });
+
+describe('computeDashboardStats — 副本语义', () => {
+  test('doneTodayTasks 是快照数组的副本而非同引用', () => {
+    const done = [makeTask({ checked: true })];
+    const snap = makeSnapshot({ today: { pending: [], done, backlog: [] } });
+    const s = computeDashboardStats(snap, NOW);
+    expect(s.doneTodayTasks).not.toBe(snap.today.done);
+    expect(s.doneTodayTasks).toEqual(snap.today.done);
+  });
+});
