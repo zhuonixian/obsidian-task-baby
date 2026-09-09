@@ -4,9 +4,14 @@ import type { WeekDayStat } from '../../../types';
 import { renderTaskRow } from '../groupSection';
 import type { DueGroupHandlers } from './dueGroups';
 
-function shortDate(dateKey: string): string {
-  const [, m, d] = dateKey.split('-');
-  return `${Number(m)}/${Number(d)}`;
+export interface WeekViewOptions {
+  initialSelectedKey?: string | null;
+  onSelectedChange?: (key: string | null) => void;
+}
+
+function shortDate(dateKey: string, withYear = false): string {
+  const [y, m, d] = dateKey.split('-');
+  return withYear ? `${y}/${Number(m)}/${Number(d)}` : `${Number(m)}/${Number(d)}`;
 }
 
 function renderDetail(day: WeekDayStat, handlers: DueGroupHandlers): HTMLElement {
@@ -29,11 +34,20 @@ function renderDetail(day: WeekDayStat, handlers: DueGroupHandlers): HTMLElement
   return box;
 }
 
-export function renderWeekView(weekDays: WeekDayStat[], handlers: DueGroupHandlers): HTMLElement {
+export function renderWeekView(
+  weekDays: WeekDayStat[],
+  handlers: DueGroupHandlers,
+  opts: WeekViewOptions = {}
+): HTMLElement {
   const card = h('div', { cls: 'tb-dash-card tb-dash-week' });
 
   const totalDone = weekDays.reduce((s, d) => s + d.done.length, 0);
-  const range = `${shortDate(weekDays[0].dateKey)} - ${shortDate(weekDays[6].dateKey)}`;
+  const y1 = weekDays[0].dateKey.slice(0, 4);
+  const y2 = weekDays[6].dateKey.slice(0, 4);
+  const crossYear = y1 !== y2;
+  const range = crossYear
+    ? `${shortDate(weekDays[0].dateKey, true)} - ${shortDate(weekDays[6].dateKey, true)}`
+    : `${shortDate(weekDays[0].dateKey)} - ${shortDate(weekDays[6].dateKey)}`;
   const head = h('div', { cls: 'tb-dash-week-head' });
   head.appendChild(h('span', { cls: 'tb-dash-week-title' }, `🗓 本周手账 `,
     h('span', { cls: 'tb-dash-week-range', text: range })));
@@ -42,7 +56,10 @@ export function renderWeekView(weekDays: WeekDayStat[], handlers: DueGroupHandle
 
   const grid = h('div', { cls: 'tb-dash-week-grid' });
   const detailHolder = h('div', { cls: 'tb-dash-week-detail' });
-  let selectedKey: string | null = null;
+  let selectedKey: string | null =
+    opts.initialSelectedKey != null && weekDays.some(d => d.dateKey === opts.initialSelectedKey)
+      ? opts.initialSelectedKey
+      : null;
   let selectedCell: HTMLElement | null = null;
 
   function onCellClick(cell: HTMLElement, day: WeekDayStat): void {
@@ -51,6 +68,7 @@ export function renderWeekView(weekDays: WeekDayStat[], handlers: DueGroupHandle
       detailHolder.replaceChildren();
       selectedKey = null;
       selectedCell = null;
+      opts.onSelectedChange?.(selectedKey);
       return;
     }
     if (selectedCell) selectedCell.classList.remove('selected');
@@ -58,6 +76,7 @@ export function renderWeekView(weekDays: WeekDayStat[], handlers: DueGroupHandle
     selectedCell = cell;
     selectedKey = day.dateKey;
     detailHolder.replaceChildren(renderDetail(day, handlers));
+    opts.onSelectedChange?.(selectedKey);
   }
 
   for (const day of weekDays) {
@@ -86,9 +105,18 @@ export function renderWeekView(weekDays: WeekDayStat[], handlers: DueGroupHandle
     bar.appendChild(fill);
     cell.appendChild(bar);
 
+    if (day.dateKey === selectedKey) {
+      cell.classList.add('selected');
+      selectedCell = cell;
+    }
+
     const cellRef = cell;
     cell.onclick = () => onCellClick(cellRef, day);
     grid.appendChild(cell);
+  }
+  if (selectedKey) {
+    const day = weekDays.find(d => d.dateKey === selectedKey)!;
+    detailHolder.replaceChildren(renderDetail(day, handlers));
   }
   card.appendChild(grid);
   card.appendChild(detailHolder);

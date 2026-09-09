@@ -4,11 +4,24 @@ import type { DashboardStats } from '../../../types';
 import { renderTaskRow } from '../groupSection';
 import type { DueGroupHandlers } from './dueGroups';
 
-export function renderDoneToday(stats: DashboardStats, handlers: DueGroupHandlers): HTMLElement {
+export interface DoneTodayOptions {
+  initialOpen?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function renderDoneToday(
+  stats: DashboardStats,
+  handlers: DueGroupHandlers,
+  opts: DoneTodayOptions = {}
+): HTMLElement {
   const card = h('div', { cls: 'tb-dash-card tb-dash-done-today' });
 
   const header = h('div', { cls: 'tb-dash-done-header' });
-  header.appendChild(h('span', { cls: 'tb-dash-done-arrow', text: '▶' }));
+  const arrow = h('span', {
+    cls: 'tb-dash-done-arrow',
+    text: opts.initialOpen ? '▼' : '▶'
+  });
+  header.appendChild(arrow);
   header.appendChild(h('span', {
     cls: 'tb-dash-done-title',
     text: `✅ 今日已完成 · ${stats.doneTodayTasks.length} 件`
@@ -16,11 +29,12 @@ export function renderDoneToday(stats: DashboardStats, handlers: DueGroupHandler
   card.appendChild(header);
 
   const list = h('div', { cls: 'tb-dash-done-list' });
-  list.style.display = 'none';
+  list.style.display = opts.initialOpen ? 'block' : 'none';
   header.onclick = () => {
-    const open = list.style.display !== 'none';
-    list.style.display = open ? 'none' : 'block';
-    (header.querySelector('.tb-dash-done-arrow') as HTMLElement).textContent = open ? '▶' : '▼';
+    const isOpen = list.style.display !== 'none';
+    list.style.display = isOpen ? 'none' : 'block';
+    arrow.textContent = isOpen ? '▶' : '▼';
+    opts.onOpenChange?.(!isOpen);
   };
   for (const t of stats.doneTodayTasks) {
     list.appendChild(renderTaskRow(t, false, handlers.onTaskToggle, handlers.onTaskClick));

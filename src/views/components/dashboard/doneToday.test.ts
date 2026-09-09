@@ -58,3 +58,22 @@ describe('renderDoneToday', () => {
     expect(list.textContent).toContain('还没有完成的任务');
   });
 });
+
+describe('renderDoneToday — 状态恢复', () => {
+  test('initialOpen: true → 初始展开、箭头 ▼', () => {
+    const el = renderDoneToday(makeStats([makeTask()]), handlers, { initialOpen: true });
+    const list = el.querySelector('.tb-dash-done-list') as HTMLElement;
+    expect(list.style.display).toBe('block');
+    expect(el.querySelector('.tb-dash-done-arrow')!.textContent).toBe('▼');
+  });
+
+  test('onOpenChange 在切换时上报新状态', () => {
+    const onOpenChange = jest.fn();
+    const el = renderDoneToday(makeStats([makeTask()]), handlers, { onOpenChange });
+    const header = el.querySelector('.tb-dash-done-header') as HTMLElement;
+    header.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(onOpenChange).toHaveBeenCalledWith(true);
+    header.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(onOpenChange).toHaveBeenLastCalledWith(false);
+  });
+});

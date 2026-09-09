@@ -155,3 +155,43 @@ describe('renderWeekView — 展开交互', () => {
     expect(handlers.onTaskClick).toHaveBeenCalledWith(t);
   });
 });
+
+describe('renderWeekView — 状态恢复与跨年', () => {
+  test('initialSelectedKey 在周内 → 初始即选中并展开该日', () => {
+    const week = makeWeek({ 2: { pending: [makeTask({ body: 'p' })] } });
+    const el = renderWeekView(week, handlers, { initialSelectedKey: '2026-09-09' });
+    const cells = el.querySelectorAll('.tb-dash-week-cell');
+    expect(cells[2].className).toContain('selected');
+    expect(el.querySelector('.tb-dash-week-detail .tb-task-body')!.textContent).toBe('p');
+  });
+
+  test('initialSelectedKey 不在周内（跨周残留）→ 忽略，无选中无展开', () => {
+    const el = renderWeekView(makeWeek(), handlers, { initialSelectedKey: '2026-08-30' });
+    expect(el.querySelector('.tb-dash-week-cell.selected')).toBeNull();
+    expect(el.querySelector('.tb-dash-week-detail')!.textContent).toBe('');
+  });
+
+  test('onSelectedChange 在选中与收起时上报', () => {
+    const onSelectedChange = jest.fn();
+    const el = renderWeekView(makeWeek(), handlers, { onSelectedChange });
+    const cell = el.querySelectorAll('.tb-dash-week-cell')[1] as HTMLElement;
+    cell.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(onSelectedChange).toHaveBeenCalledWith('2026-09-08');
+    cell.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(onSelectedChange).toHaveBeenLastCalledWith(null);
+  });
+
+  test('跨年周标题两端带年份', () => {
+    const week = makeWeek({
+      0: { dateKey: '2026-12-28', day: 28 },
+      6: { dateKey: '2027-01-03', day: 3 }
+    });
+    const el = renderWeekView(week, handlers);
+    expect(el.querySelector('.tb-dash-week-title')!.textContent).toContain('2026/12/28 - 2027/1/3');
+  });
+
+  test('同年周标题保持 M/D 格式', () => {
+    const el = renderWeekView(makeWeek(), handlers);
+    expect(el.querySelector('.tb-dash-week-title')!.textContent).toContain('9/7 - 9/13');
+  });
+});
