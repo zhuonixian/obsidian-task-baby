@@ -83,3 +83,17 @@ Run this before tagging a release.
 
 - [ ] Sidebar dragged to 240px wide: no overflow
 - [ ] Board tab resized to 800px wide: columns reflow
+
+## Dashboard overview tab
+
+打开看板（默认落在「总览」tab）：
+
+- [ ] 摘要卡：环百分比 = 今日 done/(done+pending)；三磁贴数字与今日一致；0 任务时环显示 `—` 与「还没有任务」
+- [ ] 热力图：30 格、悬停显示 `日期 · 完成 N 件`；头部「共完成 N 件 · 日均 X」
+- [ ] 逾期组任务带红色顶边 + 📅 标签；今日到期/未来 7 天分组正确（对照一个 due=今天、一个 due=明天的任务）
+- [ ] 勾选任一任务 → 写回源文件（Notice 提示）→ dashboard 数字/环/热力图刷新
+- [ ] 点击任务正文 → 打开源笔记并定位到行
+- [ ] 「今日已完成」默认收起，点击展开可再收起；展开的行有划线样式
+- [ ] 亮/暗主题各过一遍：热力图 4 档色阶在暗色下可辨识
+- [ ] 拖窄面板：任务三组自动降为两列/单列；热力图格子等比缩小
+- [ ] 其余三个 tab（今日/日历/全局）行为不变

@@ -5,7 +5,8 @@ Visualize completed and pending tasks across your daily-note logs, with a snooze
 ## Features
 
 - 📋 **Sidebar compact view**: today's pending + historical backlog at a glance
-- 📊 **Full board tab** with three views:
+- 📊 **Full board tab** with four views:
+  - 🏠 **Overview**: dashboard — completion ring, 30-day heatmap, due-date groups
   - 📅 **Today**: 3-column layout (pending / done / backlog)
   - 🗓 **Calendar**: 30-day grid with task counts
   - 🌐 **Global**: all pending (deduped) vs all done
