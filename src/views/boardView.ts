@@ -7,11 +7,12 @@ import { toggleTask } from '../data/taskWriter';
 import { h } from '../utils/domHelpers';
 import { renderGroupSection } from './components/groupSection';
 import { renderCalendarGrid } from './components/calendarGrid';
-import { computeDashboardStats } from '../data/dashboardStats';
+import { computeDashboardStats, computeWeekDays } from '../data/dashboardStats';
 import { renderSummaryCard } from './components/dashboard/summaryCard';
 import { renderHeatmap } from './components/dashboard/heatmap';
 import { renderDueGroups } from './components/dashboard/dueGroups';
 import { renderDoneToday } from './components/dashboard/doneToday';
+import { renderWeekView } from './components/dashboard/weekView';
 import type { DueGroupHandlers } from './components/dashboard/dueGroups';
 
 export const BOARD_VIEW_TYPE = 'taskbaby-board';
@@ -127,6 +128,8 @@ export class BoardTabView extends ItemView {
     const wrap = h('div', { cls: 'tb-dash-root' });
     wrap.appendChild(renderSummaryCard(stats));
     wrap.appendChild(renderHeatmap(stats));
+    const weekDays = computeWeekDays(this.snapshot!, new Date());
+    wrap.appendChild(renderWeekView(weekDays, handlers));
     wrap.appendChild(renderDueGroups(stats, handlers));
     wrap.appendChild(renderDoneToday(stats, handlers));
     return wrap;

@@ -333,3 +333,92 @@ body.theme-dark .tb-dash-hm-cell.l3 { background: #c97b5d; }
 }
 .tb-dash-done-title { font-weight: bold; color: var(--text-success); }
 .tb-dash-done-list { margin-top: 6px; }
+
+/* —— 周手账周视图 —— */
+.tb-dash-week-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.tb-dash-week-title { font-weight: bold; }
+.tb-dash-week-range {
+  color: var(--text-muted);
+  font-weight: normal;
+  font-size: 0.85em;
+}
+.tb-dash-week-sum { font-size: 0.77em; color: var(--text-muted); }
+.tb-dash-week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+.tb-dash-week-cell {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 10px;
+  padding: 8px 4px;
+  text-align: center;
+  cursor: pointer;
+}
+.tb-dash-week-cell.today {
+  border: 2px solid var(--interactive-accent);
+}
+.tb-dash-week-cell.weekend {
+  background: #f7f3e4;
+}
+body.theme-dark .tb-dash-week-cell.weekend {
+  background: #454032;
+}
+.tb-dash-week-cell.future {
+  border-style: dashed;
+  opacity: 0.65;
+}
+.tb-dash-week-dow { font-size: 0.69em; color: var(--text-muted); }
+.tb-dash-week-cell.today .tb-dash-week-dow {
+  color: var(--interactive-accent);
+  font-weight: bold;
+}
+.tb-dash-week-day { font-size: 1.1em; font-weight: bold; color: var(--text-normal); }
+.tb-dash-week-counts { font-size: 0.69em; color: var(--text-success); margin-top: 2px; }
+.tb-dash-week-bar {
+  height: 4px;
+  background: var(--background-modifier-border);
+  border-radius: 2px;
+  margin: 5px 6px 0;
+  overflow: hidden;
+}
+.tb-dash-week-bar-fill {
+  height: 100%;
+  background: var(--text-success);
+  border-radius: 2px;
+}
+.tb-dash-week-cell.today .tb-dash-week-bar-fill { background: var(--interactive-accent); }
+.tb-dash-week-cell.selected { border: 2px solid var(--interactive-accent); }
+.tb-dash-week-cell.selected::after {
+  content: '▼';
+  display: block;
+  font-size: 0.62em;
+  color: var(--interactive-accent);
+  margin-top: 2px;
+}
+.tb-dash-week-detail { margin-top: 10px; }
+.tb-dash-week-detail-box {
+  background: var(--background-primary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+.tb-dash-week-detail-title {
+  font-size: 0.85em;
+  font-weight: bold;
+  margin-bottom: 6px;
+  color: var(--text-normal);
+}
+.tb-dash-week-detail-hint {
+  font-size: 0.69em;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
