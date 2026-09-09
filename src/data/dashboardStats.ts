@@ -1,5 +1,5 @@
 // src/data/dashboardStats.ts
-import type { DashboardStats, DailyDoneCount, IndexSnapshot, Task } from '../types';
+import type { DashboardStats, DailyDoneCount, IndexSnapshot, Task, WeekDayStat } from '../types';
 import { formatYmd } from '../utils/dateUtils';
 
 function dayStart(d: Date): Date {
@@ -72,4 +72,31 @@ export function computeDashboardStats(snapshot: IndexSnapshot, now: Date): Dashb
     totalDone30d,
     avgPerDay: Math.round((totalDone30d / heatmapDays) * 10) / 10
   };
+}
+
+// —— 周手账周视图：本周一..周日 7 项 ——
+const DOW_LABELS = ['一', '二', '三', '四', '五', '六', '日'];
+
+export function computeWeekDays(snapshot: IndexSnapshot, now: Date): WeekDayStat[] {
+  const monday = dayStart(now);
+  monday.setDate(monday.getDate() - (now.getDay() + 6) % 7);
+  const todayKey = formatYmd(now);
+  const days: WeekDayStat[] = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    const key = formatYmd(d);
+    const bucket = snapshot.byDate.get(key);
+    days.push({
+      dateKey: key,
+      day: d.getDate(),
+      dowLabel: DOW_LABELS[i],
+      isToday: key === todayKey,
+      isWeekend: i >= 5,
+      isFuture: key > todayKey,
+      pending: bucket?.pending ?? [],
+      done: bucket?.done ?? []
+    });
+  }
+  return days;
 }

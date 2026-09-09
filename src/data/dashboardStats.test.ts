@@ -1,4 +1,4 @@
-import { computeDashboardStats } from './dashboardStats';
+import { computeDashboardStats, computeWeekDays } from './dashboardStats';
 import type { IndexSnapshot, Task } from '../types';
 
 const NOW = new Date(2026, 8, 10, 15); // 2026-09-10
@@ -120,5 +120,46 @@ describe('computeDashboardStats — 副本语义', () => {
     const s = computeDashboardStats(snap, NOW);
     expect(s.doneTodayTasks).not.toBe(snap.today.done);
     expect(s.doneTodayTasks).toEqual(snap.today.done);
+  });
+});
+
+describe('computeWeekDays — 周手账周视图', () => {
+  test('NOW=周四 → 恒 7 项，首项周一 9-07，末项周日 9-13', () => {
+    const days = computeWeekDays(makeSnapshot(), NOW); // NOW = 2026-09-10 周四
+    expect(days).toHaveLength(7);
+    expect(days[0]).toMatchObject({ dateKey: '2026-09-07', dowLabel: '一', day: 7 });
+    expect(days[6]).toMatchObject({ dateKey: '2026-09-13', dowLabel: '日', day: 13 });
+    expect(days.map(d => d.dowLabel)).toEqual(['一', '二', '三', '四', '五', '六', '日']);
+  });
+
+  test('跨月周：now=2026-09-01 周二 → 首项 2026-08-31 周一', () => {
+    const days = computeWeekDays(makeSnapshot(), new Date(2026, 8, 1, 12));
+    expect(days[0].dateKey).toBe('2026-08-31');
+    expect(days[1].dateKey).toBe('2026-09-01');
+    expect(days[6].dateKey).toBe('2026-09-06');
+  });
+
+  test('isToday 仅今日、isWeekend 恰六日、isFuture 仅今日之后', () => {
+    const days = computeWeekDays(makeSnapshot(), NOW);
+    expect(days.filter(d => d.isToday).map(d => d.dateKey)).toEqual(['2026-09-10']);
+    expect(days.filter(d => d.isWeekend).map(d => d.dateKey)).toEqual(['2026-09-12', '2026-09-13']);
+    expect(days.filter(d => d.isFuture).map(d => d.dateKey)).toEqual(['2026-09-11', '2026-09-12', '2026-09-13']);
+  });
+
+  test('byDate 分桶：pending/done 归属正确，无桶日期为空数组', () => {
+    const snap = makeSnapshot({
+      byDate: new Map([
+        ['2026-09-09', {
+          pending: [makeTask({ body: 'p1' })],
+          done: [makeTask({ body: 'd1', checked: true }), makeTask({ body: 'd2', checked: true })]
+        }]
+      ])
+    });
+    const days = computeWeekDays(snap, NOW);
+    expect(days[2]).toMatchObject({ dateKey: '2026-09-09' });
+    expect(days[2].pending.map(t => t.body)).toEqual(['p1']);
+    expect(days[2].done.map(t => t.body)).toEqual(['d1', 'd2']);
+    expect(days[0].pending).toEqual([]);
+    expect(days[0].done).toEqual([]);
   });
 });

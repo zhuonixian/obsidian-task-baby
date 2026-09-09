@@ -95,3 +95,15 @@ export interface DashboardStats {
   totalDone30d: number;
   avgPerDay: number;         // totalDone30d / dailyDone.length，保留 1 位小数
 }
+
+// —— 周手账周视图（overview tab 消费）——
+export interface WeekDayStat {
+  dateKey: string;    // "YYYY-MM-DD"
+  day: number;        // 日期数字 1-31
+  dowLabel: string;   // '一'|'二'|'三'|'四'|'五'|'六'|'日'
+  isToday: boolean;
+  isWeekend: boolean;
+  isFuture: boolean;  // dateKey > today（日粒度，字符串比较）
+  pending: Task[];    // 该日记的未完成（byDate 桶，无桶为空数组）
+  done: Task[];       // 该日记的已完成
+}
