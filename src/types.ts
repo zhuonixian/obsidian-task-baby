@@ -71,3 +71,27 @@ export class TaskLineChangedError extends Error {
 export class TaskBodyChangedError extends Error {
   constructor(msg: string) { super(msg); this.name = 'TaskBodyChangedError'; }
 }
+
+// —— Dashboard 统计（overview tab 消费）——
+export interface DailyDoneCount {
+  dateKey: string;   // "YYYY-MM-DD"
+  count: number;
+}
+
+export interface DashboardStats {
+  // 今日摘要
+  todayTotal: number;        // 今日 done+pending
+  todayDone: number;
+  todayPending: number;
+  completionRate: number;    // 0..1，0 任务时为 0（不除零）
+  overdueCount: number;
+  // 按截止日期的任务组（均来自窗口内全部未完成 allPending，按 meta.due 过滤）
+  overdue: Task[];           // due < today（日粒度）
+  dueToday: Task[];          // due == today
+  dueNext7Days: Task[];      // today < due <= today+7
+  doneTodayTasks: Task[];    // 今日已完成（= snapshot.today.done）
+  // 30 天热力图
+  dailyDone: DailyDoneCount[];  // 固定 30 项，today-29 … today
+  totalDone30d: number;
+  avgPerDay: number;         // totalDone30d / 30，保留 1 位小数
+}
