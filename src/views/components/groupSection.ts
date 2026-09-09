@@ -41,7 +41,7 @@ export function renderGroupSection(opts: GroupSectionOptions): HTMLElement {
   return wrapper;
 }
 
-function renderTaskRow(
+export function renderTaskRow(
   task: Task,
   showSourceDate: boolean | undefined,
   onToggle: (t: Task) => void,
