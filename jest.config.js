@@ -4,7 +4,7 @@ module.exports = {
       displayName: 'node',
       testEnvironment: 'node',
       testMatch: ['<rootDir>/src/**/*.test.ts', '<rootDir>/__fixtures__/**/*.test.ts'],
-      testPathIgnorePatterns: ['<rootDir>/src/utils/domHelpers.test.ts', '<rootDir>/src/reminder/reminderModal.test.ts'],
+      testPathIgnorePatterns: ['<rootDir>/src/utils/domHelpers.test.ts', '<rootDir>/src/reminder/reminderModal.test.ts', '<rootDir>/src/views/'],
       moduleNameMapper: { '^obsidian$': '<rootDir>/__mocks__/obsidian.ts' },
       transform: { '^.+\\.ts$': 'ts-jest' },
       clearMocks: true
