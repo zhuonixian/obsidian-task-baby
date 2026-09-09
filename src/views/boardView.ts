@@ -23,6 +23,8 @@ export class BoardTabView extends ItemView {
   plugin: TaskBoardPlugin;
   private snapshot: IndexSnapshot | null = null;
   private mode: ViewMode = 'overview';
+  private weekSelectedKey: string | null = null;
+  private doneTodayOpen = false;
 
   constructor(leaf: WorkspaceLeaf, plugin: TaskBoardPlugin) {
     super(leaf);
@@ -129,9 +131,15 @@ export class BoardTabView extends ItemView {
     wrap.appendChild(renderSummaryCard(stats));
     wrap.appendChild(renderHeatmap(stats));
     const weekDays = computeWeekDays(this.snapshot!, new Date());
-    wrap.appendChild(renderWeekView(weekDays, handlers));
+    wrap.appendChild(renderWeekView(weekDays, handlers, {
+      initialSelectedKey: this.weekSelectedKey,
+      onSelectedChange: key => { this.weekSelectedKey = key; }
+    }));
     wrap.appendChild(renderDueGroups(stats, handlers));
-    wrap.appendChild(renderDoneToday(stats, handlers));
+    wrap.appendChild(renderDoneToday(stats, handlers, {
+      initialOpen: this.doneTodayOpen,
+      onOpenChange: open => { this.doneTodayOpen = open; }
+    }));
     return wrap;
   }
 
