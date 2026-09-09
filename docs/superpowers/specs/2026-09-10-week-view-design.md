@@ -81,7 +81,7 @@ export function computeWeekDays(snapshot: IndexSnapshot, now: Date): WeekDayStat
 
 ## 7. 边界与空态
 
-- 整周无任务：格子照常显示计数 0（迷你条 0%），不隐藏卡片
+- 整周无任务：格子显示 `—`（无数据规则与未来格一致），不隐藏卡片；有任务的格子照常计数
 - 未来天格子可点击，展开空清单显示"还没有任务"
 - 选中格再点同格收起；点新格直接切换内容
 - 展开清单行序：该日 pending 在前、done 在后（done 行有划线样式）
