@@ -51,4 +51,10 @@ describe('renderDoneToday', () => {
     expect(body.textContent).toBe('写日报');
     expect(body.className).toContain('tb-done');
   });
+
+  test('0 件时列表含空态文案', () => {
+    const el = renderDoneToday(makeStats([]), handlers);
+    const list = el.querySelector('.tb-dash-done-list') as HTMLElement;
+    expect(list.textContent).toContain('还没有完成的任务');
+  });
 });

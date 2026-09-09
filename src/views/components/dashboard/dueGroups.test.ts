@@ -44,6 +44,27 @@ describe('renderDueGroups', () => {
     expect(futureCard.querySelector('.tb-task-src')!.textContent).toBe('📅09-12');
   });
 
+  test('dueToday 组行不带日期标签（今日冗余）', () => {
+    const t = makeTask({ meta: { tags: [], due: new Date(2026, 8, 10) } });
+    const el = renderDueGroups(makeStats({ dueToday: [t] }), makeHandlers());
+    const todayCard = el.querySelectorAll('.tb-dash-due-card')[1];
+    expect(todayCard.querySelector('.tb-task-src')).toBeNull();
+  });
+
+  test('逾期组：来源日期标签 + 跨年 due 显示年份', () => {
+    const t = makeTask({
+      sourceDate: new Date(2026, 8, 2),
+      meta: { tags: [], due: new Date(2025, 11, 30) }
+    });
+    const el = renderDueGroups(makeStats({ overdue: [t] }), makeHandlers());
+    const overdueCard = el.querySelectorAll('.tb-dash-due-card')[0];
+    const labels = Array.from(overdueCard.querySelectorAll('.tb-task-src'))
+      .map(s => s.textContent);
+    expect(labels).toContain('📅2025-12-30');
+    expect(labels).toContain('09-02');
+    expect(labels.length).toBe(2);
+  });
+
   test('空组显示「无 🎉」', () => {
     const el = renderDueGroups(makeStats(), makeHandlers());
     expect(el.querySelector('.tb-dash-due-empty')!.textContent).toBe('无 🎉');

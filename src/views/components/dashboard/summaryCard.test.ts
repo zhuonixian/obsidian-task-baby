@@ -51,5 +51,14 @@ describe('renderSummaryCard', () => {
     }));
     expect(el.querySelector('.tb-dash-ring-pct')!.textContent).toBe('—');
     expect(el.querySelector('.tb-dash-ring-sub')!.textContent).toBe('还没有任务');
+    expect(el.querySelector('.tb-dash-ring-arc')).toBeNull();
+  });
+
+  test('0% 但有任务时环 arc 同样隐藏（零长度 dash 会渲染圆点）', () => {
+    const el = renderSummaryCard(makeStats({
+      todayTotal: 3, todayDone: 0, todayPending: 3, completionRate: 0
+    }));
+    expect(el.querySelector('.tb-dash-ring-pct')!.textContent).toBe('0%');
+    expect(el.querySelector('.tb-dash-ring-arc')).toBeNull();
   });
 });

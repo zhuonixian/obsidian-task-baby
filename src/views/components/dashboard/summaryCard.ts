@@ -25,21 +25,23 @@ export function renderSummaryCard(stats: DashboardStats): HTMLElement {
     cx: 56, cy: 56, r: R, fill: 'none',
     stroke: 'currentColor', 'stroke-width': 12, class: 'tb-dash-ring-bg'
   }));
-  ring.appendChild(sv('circle', {
-    cx: 56, cy: 56, r: R, fill: 'none',
-    stroke: 'currentColor', 'stroke-width': 12,
-    'stroke-linecap': 'round',
-    'stroke-dasharray': `${(stats.completionRate * C).toFixed(1)} ${C.toFixed(1)}`,
-    transform: 'rotate(-90 56 56)',
-    class: 'tb-dash-ring-arc'
-  }));
+  if (stats.completionRate > 0) {
+    ring.appendChild(sv('circle', {
+      cx: 56, cy: 56, r: R, fill: 'none',
+      stroke: 'currentColor', 'stroke-width': 12,
+      'stroke-linecap': 'round',
+      'stroke-dasharray': `${(stats.completionRate * C).toFixed(1)} ${C.toFixed(1)}`,
+      transform: 'rotate(-90 56 56)',
+      class: 'tb-dash-ring-arc'
+    }));
+  }
   const pct = sv('text', { x: 56, y: 54, 'text-anchor': 'middle', class: 'tb-dash-ring-pct' });
   pct.textContent = stats.todayTotal === 0 ? '—' : `${Math.round(stats.completionRate * 100)}%`;
   ring.appendChild(pct);
   const sub = sv('text', { x: 56, y: 70, 'text-anchor': 'middle', class: 'tb-dash-ring-sub' });
   sub.textContent = stats.todayTotal === 0 ? '还没有任务' : `${stats.todayDone}/${stats.todayTotal} 完成`;
   ring.appendChild(sub);
-  main.appendChild(ring as unknown as Node);
+  main.appendChild(ring);
 
   const tiles = h('div', { cls: 'tb-dash-tiles' });
   tiles.appendChild(renderTile('▢ 今日待办', stats.todayPending, 'tb-dash-tile-pend'));

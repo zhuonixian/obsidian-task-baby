@@ -25,6 +25,9 @@ export function renderDoneToday(stats: DashboardStats, handlers: DueGroupHandler
   for (const t of stats.doneTodayTasks) {
     list.appendChild(renderTaskRow(t, false, handlers.onTaskToggle, handlers.onTaskClick));
   }
+  if (stats.doneTodayTasks.length === 0) {
+    list.appendChild(h('div', { cls: 'tb-dash-due-empty', text: '还没有完成的任务' }));
+  }
   card.appendChild(list);
 
   return card;
