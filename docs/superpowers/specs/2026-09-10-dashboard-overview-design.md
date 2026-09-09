@@ -81,6 +81,7 @@ export interface DashboardStats {
   overdue: Task[];           // due < today
   dueToday: Task[];          // due == today
   dueNext7Days: Task[];      // today < due <= today+7
+  doneTodayTasks: Task[];    // 今日已完成（= snapshot.today.done），供折叠清单
   // 热力图
   dailyDone: DailyDoneCount[];  // 固定 30 项，today-29 … today，无完成记 0
   totalDone30d: number;
