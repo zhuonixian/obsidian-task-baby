@@ -132,6 +132,12 @@ describe('computeWeekDays — 周手账周视图', () => {
     expect(days.map(d => d.dowLabel)).toEqual(['一', '二', '三', '四', '五', '六', '日']);
   });
 
+  test('now=周日 → 归属前一周的周一（getDay=0 回退 6 天）', () => {
+    const days = computeWeekDays(makeSnapshot(), new Date(2026, 8, 13, 12)); // 2026-09-13 周日
+    expect(days[0].dateKey).toBe('2026-09-07');
+    expect(days[6].dateKey).toBe('2026-09-13');
+  });
+
   test('跨月周：now=2026-09-01 周二 → 首项 2026-08-31 周一', () => {
     const days = computeWeekDays(makeSnapshot(), new Date(2026, 8, 1, 12));
     expect(days[0].dateKey).toBe('2026-08-31');

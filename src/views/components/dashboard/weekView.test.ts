@@ -143,4 +143,15 @@ describe('renderWeekView — 展开交互', () => {
     box.dispatchEvent(new MouseEvent('click', { bubbles: true }));
     expect(handlers.onTaskToggle).toHaveBeenCalledWith(t);
   });
+
+  test('点正文触发 onTaskClick', () => {
+    const t = makeTask({ body: 'jump' });
+    const week = makeWeek({ 0: { pending: [t] } });
+    const el = renderWeekView(week, handlers);
+    (el.querySelectorAll('.tb-dash-week-cell')[0] as HTMLElement)
+      .dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    const body = el.querySelector('.tb-dash-week-detail .tb-task-body') as HTMLElement;
+    body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    expect(handlers.onTaskClick).toHaveBeenCalledWith(t);
+  });
 });

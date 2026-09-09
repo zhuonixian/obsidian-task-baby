@@ -81,7 +81,7 @@ export function renderWeekView(weekDays: WeekDayStat[], handlers: DueGroupHandle
     const fill = h('div', { cls: 'tb-dash-week-bar-fill' });
     const total = day.done.length + day.pending.length;
     if (total > 0) {
-      (fill.style as any).width = `${Math.round((day.done.length / total) * 100)}%`;
+      fill.style.width = `${Math.round((day.done.length / total) * 100)}%`;
     }
     bar.appendChild(fill);
     cell.appendChild(bar);
