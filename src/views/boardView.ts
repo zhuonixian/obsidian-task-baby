@@ -7,15 +7,21 @@ import { toggleTask } from '../data/taskWriter';
 import { h } from '../utils/domHelpers';
 import { renderGroupSection } from './components/groupSection';
 import { renderCalendarGrid } from './components/calendarGrid';
+import { computeDashboardStats } from '../data/dashboardStats';
+import { renderSummaryCard } from './components/dashboard/summaryCard';
+import { renderHeatmap } from './components/dashboard/heatmap';
+import { renderDueGroups } from './components/dashboard/dueGroups';
+import { renderDoneToday } from './components/dashboard/doneToday';
+import type { DueGroupHandlers } from './components/dashboard/dueGroups';
 
 export const BOARD_VIEW_TYPE = 'taskbaby-board';
 
-type ViewMode = 'today' | 'calendar' | 'global';
+type ViewMode = 'overview' | 'today' | 'calendar' | 'global';
 
 export class BoardTabView extends ItemView {
   plugin: TaskBoardPlugin;
   private snapshot: IndexSnapshot | null = null;
-  private mode: ViewMode = 'today';
+  private mode: ViewMode = 'overview';
 
   constructor(leaf: WorkspaceLeaf, plugin: TaskBoardPlugin) {
     super(leaf);
@@ -45,11 +51,13 @@ export class BoardTabView extends ItemView {
 
     // —— header ——
     const header = h('div', { cls: 'tb-board-header' });
-    const titleText = this.mode === 'today'
-      ? `📊 任务看板 — 今日`
-      : this.mode === 'calendar'
-        ? `📊 任务看板 — 日历`
-        : `📊 任务看板 — 全局`;
+    const titleText = this.mode === 'overview'
+      ? `📊 任务看板 — 总览`
+      : this.mode === 'today'
+        ? `📊 任务看板 — 今日`
+        : this.mode === 'calendar'
+          ? `📊 任务看板 — 日历`
+          : `📊 任务看板 — 全局`;
     header.appendChild(h('span', { cls: 'tb-board-title', text: titleText }));
     header.appendChild(h('button', {
       cls: 'tb-board-refresh',
@@ -60,6 +68,12 @@ export class BoardTabView extends ItemView {
 
     // —— tab bar ——
     const tabs = h('div', { cls: 'tb-board-tabs' });
+    const tabOverview = h('button', {
+      cls: 'tb-tab' + (this.mode === 'overview' ? ' active' : ''),
+      text: '🏠 总览',
+      onclick: () => this.switchMode('overview')
+    });
+    tabs.appendChild(tabOverview);
     const tabToday = h('button', {
       cls: 'tb-tab' + (this.mode === 'today' ? ' active' : ''),
       text: '📅 今日',
@@ -84,7 +98,9 @@ export class BoardTabView extends ItemView {
 
     // —— body ——
     const body = h('div', { cls: 'tb-board-body' });
-    if (this.mode === 'today') {
+    if (this.mode === 'overview') {
+      body.appendChild(this.renderOverview());
+    } else if (this.mode === 'today') {
       body.appendChild(this.renderTodayView());
     } else if (this.mode === 'calendar') {
       body.appendChild(renderCalendarGrid(this.snapshot, (key) => this.renderDayDetail(key)));
@@ -100,6 +116,20 @@ export class BoardTabView extends ItemView {
         text: `⚠ ${this.snapshot.errors.length} 个文件解析失败 · 点击查看`
       }));
     }
+  }
+
+  private renderOverview(): HTMLElement {
+    const stats = computeDashboardStats(this.snapshot!, new Date());
+    const handlers: DueGroupHandlers = {
+      onTaskToggle: t => this.handleToggle(t),
+      onTaskClick: t => this.handleOpen(t)
+    };
+    const wrap = h('div', { cls: 'tb-dash-root' });
+    wrap.appendChild(renderSummaryCard(stats));
+    wrap.appendChild(renderHeatmap(stats));
+    wrap.appendChild(renderDueGroups(stats, handlers));
+    wrap.appendChild(renderDoneToday(stats, handlers));
+    return wrap;
   }
 
   private renderTodayView(): HTMLElement {

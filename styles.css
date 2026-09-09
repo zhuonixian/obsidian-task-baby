@@ -233,3 +233,103 @@
 .tb-reminder-buttons button {
   cursor: pointer;
 }
+
+/* —— Dashboard overview —— */
+.tb-dash-root {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tb-dash-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--background-modifier-border);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+/* 摘要卡 */
+.tb-dash-summary-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.tb-dash-ring { width: 112px; height: 112px; flex-shrink: 0; }
+.tb-dash-ring-bg { color: var(--background-modifier-border); }
+.tb-dash-ring-arc { color: var(--interactive-accent); }
+.tb-dash-ring-pct { fill: var(--text-normal); font-size: 20px; font-weight: 700; }
+.tb-dash-ring-sub { fill: var(--text-muted); font-size: 9px; }
+.tb-dash-tiles {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  min-width: 200px;
+}
+.tb-dash-tile {
+  border-radius: 10px;
+  padding: 8px 6px;
+  text-align: center;
+  background: var(--background-modifier-hover);
+}
+.tb-dash-tile-n { font-size: 1.4em; font-weight: 700; }
+.tb-dash-tile-label { font-size: 0.77em; color: var(--text-muted); }
+.tb-dash-tile-overdue { background: var(--background-modifier-error); }
+.tb-dash-tile-overdue .tb-dash-tile-n { color: var(--text-error); }
+
+/* 热力图 */
+.tb-dash-heatmap-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+.tb-dash-heatmap-title { font-weight: bold; }
+.tb-dash-heatmap-sum { font-size: 0.77em; color: var(--text-muted); }
+.tb-dash-hm-grid {
+  display: grid;
+  grid-template-columns: repeat(15, 1fr);
+  gap: 3px;
+}
+.tb-dash-hm-cell { aspect-ratio: 1; border-radius: 4px; }
+.tb-dash-hm-cell.l0 { background: var(--background-modifier-border); }
+.tb-dash-hm-cell.l1 { background: #f3d9c8; }
+.tb-dash-hm-cell.l2 { background: #eec3a6; }
+.tb-dash-hm-cell.l3 { background: #e8987a; }
+body.theme-dark .tb-dash-hm-cell.l1 { background: #5a4636; }
+body.theme-dark .tb-dash-hm-cell.l2 { background: #7d5a40; }
+body.theme-dark .tb-dash-hm-cell.l3 { background: #c97b5d; }
+.tb-dash-hm-legend {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  justify-content: flex-end;
+  margin-top: 6px;
+}
+.tb-dash-hm-cell.legend { width: 10px; height: 10px; aspect-ratio: auto; }
+.tb-dash-hm-legend-text { font-size: 0.69em; color: var(--text-muted); margin: 0 3px; }
+
+/* 任务三组 */
+.tb-dash-due-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+.tb-dash-due-card { border-top: 3px solid var(--background-modifier-border); }
+.tb-dash-due-card.tb-dash-accent-overdue { border-top-color: var(--text-error); }
+.tb-dash-due-card.tb-dash-accent-today { border-top-color: var(--interactive-accent); }
+.tb-dash-due-card.tb-dash-accent-future { border-top-color: var(--text-success); }
+.tb-dash-due-title { font-size: 0.85em; font-weight: bold; margin-bottom: 6px; }
+.tb-dash-due-empty { font-size: 0.85em; color: var(--text-muted); }
+
+/* 今日已完成折叠 */
+.tb-dash-done-header {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  cursor: pointer;
+}
+.tb-dash-done-title { font-weight: bold; color: var(--text-success); }
+.tb-dash-done-list { margin-top: 6px; }
