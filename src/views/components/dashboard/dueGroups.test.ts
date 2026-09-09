@@ -38,7 +38,8 @@ describe('renderDueGroups', () => {
   });
 
   test('任务行带 📅MM-DD 到期标签', () => {
-    const t = makeTask({ meta: { tags: [], due: new Date(2026, 8, 12) } });
+    const thisYear = new Date().getFullYear();
+    const t = makeTask({ meta: { tags: [], due: new Date(thisYear, 8, 12) } });
     const el = renderDueGroups(makeStats({ dueNext7Days: [t] }), makeHandlers());
     const futureCard = el.querySelectorAll('.tb-dash-due-card')[2];
     expect(futureCard.querySelector('.tb-task-src')!.textContent).toBe('📅09-12');
