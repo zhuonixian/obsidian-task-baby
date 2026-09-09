@@ -13,7 +13,7 @@ export function renderHeatmap(stats: DashboardStats): HTMLElement {
   const card = h('div', { cls: 'tb-dash-card tb-dash-heatmap' });
 
   const head = h('div', { cls: 'tb-dash-heatmap-head' });
-  head.appendChild(h('span', { cls: 'tb-dash-heatmap-title', text: '📈 近 30 天完成热力图' }));
+  head.appendChild(h('span', { cls: 'tb-dash-heatmap-title', text: `📈 近 ${stats.dailyDone.length} 天完成热力图` }));
   head.appendChild(h('span', {
     cls: 'tb-dash-heatmap-sum',
     text: `共完成 ${stats.totalDone30d} 件 · 日均 ${stats.avgPerDay}`

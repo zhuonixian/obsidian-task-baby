@@ -75,6 +75,13 @@ describe('computeDashboardStats — due 分组', () => {
     const s = computeDashboardStats(makeSnapshot({ allPending: [later, earlier] }), NOW);
     expect(s.overdue.map(t => t.body)).toEqual(['earlier', 'later']);
   });
+
+  test('未来 7 天组按 due 升序', () => {
+    const later = makeTask({ body: 'later', meta: { tags: [], due: new Date(2026, 8, 15) } });
+    const earlier = makeTask({ body: 'earlier', meta: { tags: [], due: new Date(2026, 8, 11) } });
+    const s = computeDashboardStats(makeSnapshot({ allPending: [later, earlier] }), NOW);
+    expect(s.dueNext7Days.map(t => t.body)).toEqual(['earlier', 'later']);
+  });
 });
 
 describe('computeDashboardStats — 热力图', () => {
@@ -93,5 +100,15 @@ describe('computeDashboardStats — 热力图', () => {
     expect(s.dailyDone[0].dateKey).toBe('2026-08-12');
     expect(s.totalDone30d).toBe(3);
     expect(s.avgPerDay).toBe(0.1);
+  });
+
+  test('窗口小于 30 天时热力图收敛到窗口天数', () => {
+    const s = computeDashboardStats(
+      makeSnapshot({ windowStart: new Date(2026, 8, 4) }), // 9-04..9-10 = 7 天
+      NOW
+    );
+    expect(s.dailyDone).toHaveLength(7);
+    expect(s.dailyDone[0].dateKey).toBe('2026-09-04');
+    expect(s.dailyDone[6].dateKey).toBe('2026-09-10');
   });
 });

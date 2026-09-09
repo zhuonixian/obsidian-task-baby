@@ -91,7 +91,7 @@ export interface DashboardStats {
   dueNext7Days: Task[];      // today < due <= today+7
   doneTodayTasks: Task[];    // 今日已完成（= snapshot.today.done）
   // 30 天热力图
-  dailyDone: DailyDoneCount[];  // 固定 30 项，today-29 … today
+  dailyDone: DailyDoneCount[];  // 近 N 项（N = min(rangeDays, 30)），末项为 today
   totalDone30d: number;
-  avgPerDay: number;         // totalDone30d / 30，保留 1 位小数
+  avgPerDay: number;         // totalDone30d / dailyDone.length，保留 1 位小数
 }

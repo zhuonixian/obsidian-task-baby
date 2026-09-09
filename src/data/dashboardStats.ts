@@ -2,8 +2,6 @@
 import type { DashboardStats, DailyDoneCount, IndexSnapshot, Task } from '../types';
 import { formatYmd } from '../utils/dateUtils';
 
-const HEATMAP_DAYS = 30;
-
 function dayStart(d: Date): Date {
   const x = new Date(d);
   x.setHours(0, 0, 0, 0);
@@ -37,15 +35,20 @@ export function computeDashboardStats(snapshot: IndexSnapshot, now: Date): Dashb
   overdue.sort(byDueAsc);
   dueNext7Days.sort(byDueAsc);
 
-  // —— 30 天热力图：优先 meta.done，无则回退 sourceDate ——
+  // —— 热力图：窗口收敛到扫描范围（≤30 天），优先 meta.done，无则回退 sourceDate ——
   const countByKey = new Map<string, number>();
   for (const t of snapshot.allDone) {
     const key = formatYmd(t.meta?.done ?? t.sourceDate);
     countByKey.set(key, (countByKey.get(key) ?? 0) + 1);
   }
+  // 窗口日历天数（含两端），Math.round 防 DST 半小时级偏差
+  const windowDays = Math.round(
+    (dayStart(snapshot.windowEnd).getTime() - dayStart(snapshot.windowStart).getTime()) / (24 * 60 * 60 * 1000)
+  ) + 1;
+  const heatmapDays = Math.max(1, Math.min(30, windowDays));
   const dailyDone: DailyDoneCount[] = [];
   let totalDone30d = 0;
-  for (let i = HEATMAP_DAYS - 1; i >= 0; i--) {
+  for (let i = heatmapDays - 1; i >= 0; i--) {
     const d = new Date(dayStart(now));
     d.setDate(d.getDate() - i);
     const key = formatYmd(d);
@@ -66,6 +69,6 @@ export function computeDashboardStats(snapshot: IndexSnapshot, now: Date): Dashb
     doneTodayTasks: done,
     dailyDone,
     totalDone30d,
-    avgPerDay: Math.round((totalDone30d / HEATMAP_DAYS) * 10) / 10
+    avgPerDay: Math.round((totalDone30d / heatmapDays) * 10) / 10
   };
 }
