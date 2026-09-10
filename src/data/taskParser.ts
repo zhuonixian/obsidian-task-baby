@@ -4,6 +4,8 @@ import { textHash, stripMeta, PRIORITY_EMOJI } from '../utils/textHash';
 
 const TASK_LINE_RE = /^(\s*)(?:[-*+]|\d+[.)]) \[( |[xX])\] (.+)$/;
 const CODE_FENCE_RE = /^(\s*)(```|~~~)/;
+// Obsidian callout 引用行前缀：> > > ... 或 >（可带空格）
+const CALLOUT_PREFIX_RE = /^(?:> ?)+/;
 
 // Emoji patterns
 const RECURRENCE_RE = /\u{1F501}\s*([^#\u{1F4C5}\u{23F3}\u{1F6EB}\u{2705}\u{23EB}\u{1F53C}\u{1F53D}\u{23EC}]+)/u;
@@ -102,7 +104,9 @@ export function parseFile(
     }
     if (inCodeBlock) continue;
 
-    const m = line.match(TASK_LINE_RE);
+    // 剥离 Obsidian callout 引用前缀（> > > ...），再匹配裸任务行
+    const strippedLine = line.replace(CALLOUT_PREFIX_RE, '');
+    const m = strippedLine.match(TASK_LINE_RE);
     if (!m) continue;
 
     const indent = m[1].length;

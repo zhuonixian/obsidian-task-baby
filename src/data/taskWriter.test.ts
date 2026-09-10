@@ -142,3 +142,23 @@ describe('TaskWriter.toggle ordered list', () => {
     expect(vault.contents[file.path]).not.toMatch(/✅/);
   });
 });
+
+describe('TaskWriter.toggle callout tasks', () => {
+  test('勾选 callout 任务：保留 > 前缀', async () => {
+    const { vault, file } = setupVault('> - [ ] playbook-pg\n');
+    const task = makeTask(0, 'playbook-pg', 'playbook-pg', false, file.path);
+    await toggleTask(vault, task, SETTINGS, new Date(2026, 5, 14));
+    const after = vault.contents[file.path];
+    expect(after).toMatch(/^> - \[x\] playbook-pg/);
+    expect(after).toMatch(/✅ 2026-06-14/);
+  });
+
+  test('取消勾选 callout 任务：保留嵌套 > > 前缀', async () => {
+    const { vault, file } = setupVault('> > - [x] 嵌套任务 ✅ 2026-06-14\n');
+    const task = makeTask(0, '嵌套任务', '嵌套任务', true, file.path);
+    await toggleTask(vault, task, SETTINGS, new Date(2026, 5, 14));
+    const after = vault.contents[file.path];
+    expect(after).toMatch(/^> > - \[ \] 嵌套任务/);
+    expect(after).not.toMatch(/✅/);
+  });
+});

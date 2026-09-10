@@ -1,4 +1,4 @@
-# TaskBaby for Obsidian
+# Task Board for Obsidian
 
 Visualize completed and pending tasks across your daily-note logs, with a snooze/dismiss daily reminder.
 
@@ -23,10 +23,10 @@ Visualize completed and pending tasks across your daily-note logs, with a snooze
 ```bash
 npm install
 npm run build
-# Outputs to dist/task-baby/ : main.js + manifest.json + styles.css
+# Outputs to dist/task-board/ : main.js + manifest.json + styles.css
 ```
 
-Copy the 3 files in `dist/task-baby/` to `<vault>/.obsidian/plugins/task-baby/`.
+Copy the 3 files in `dist/task-board/` to `<vault>/.obsidian/plugins/task-board/`.
 
 ### Option B: Install from Obsidian community plugins
 
@@ -34,8 +34,8 @@ Copy the 3 files in `dist/task-baby/` to `<vault>/.obsidian/plugins/task-baby/`.
 
 ### Configure
 
-1. In Obsidian: Settings → Community plugins → enable **TaskBaby**
-2. Open Settings → TaskBaby
+1. In Obsidian: Settings → Community plugins → enable **Task Board**
+2. Open Settings → Task Board
 3. Set **Daily dir** to your daily-notes folder (e.g. `DailyLife`)
 4. Set **File pattern** (default `YYYY-MM-DD.md`)
 5. Click **Preview matched files** to verify
@@ -66,8 +66,8 @@ Standard checkbox + Tasks plugin metadata:
 ```bash
 npm install
 npm test          # run all tests
-npm run dev       # watch build → dist/task-baby/main.js
-npm run build     # production build → dist/task-baby/{main.js,manifest.json,styles.css}
+npm run dev       # watch build → dist/task-board/main.js
+npm run build     # production build → dist/task-board/{main.js,manifest.json,styles.css}
 npm run lint      # typecheck
 ```
 

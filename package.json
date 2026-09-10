@@ -1,5 +1,5 @@
 {
-  "name": "obsidian-task-baby",
+  "name": "obsidian-task-board",
   "version": "0.2.0",
   "description": "Visualize completed/pending tasks across daily-note logs",
   "main": "main.js",
@@ -7,12 +7,12 @@
   "author": "zhuonixian",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/zhuonixian/obsidian-task-baby.git"
+    "url": "git+https://github.com/zhuonixian/obsidian-task-board.git"
   },
   "bugs": {
-    "url": "https://github.com/zhuonixian/obsidian-task-baby/issues"
+    "url": "https://github.com/zhuonixian/obsidian-task-board/issues"
   },
-  "homepage": "https://github.com/zhuonixian/obsidian-task-baby#readme",
+  "homepage": "https://github.com/zhuonixian/obsidian-task-board#readme",
   "scripts": {
     "dev": "node esbuild.config.mjs",
     "build": "node esbuild.config.mjs --production",

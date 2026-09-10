@@ -5,7 +5,7 @@ import { copyFileSync, mkdirSync } from 'fs';
 
 const prod = process.argv.includes('--production');
 
-const OUT_DIR = 'dist/task-baby';
+const OUT_DIR = 'dist/task-board';
 const OUT_FILE = `${OUT_DIR}/main.js`;
 
 const commonOptions = {

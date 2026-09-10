@@ -237,3 +237,55 @@ describe('TaskParser ordered list checkboxes', () => {
     expect(open?.lineStart).toBe(0);
   });
 });
+
+describe('TaskParser callout (Obsidian > block) support', () => {
+  const content = loadFixture('callout-tasks.md');
+
+  test('parses tasks inside [!todo] callout', () => {
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 15));
+    const bodies = tasks.map(t => t.body);
+    expect(bodies).toContain('playbook-pg');
+    expect(bodies).toContain('playbook-redis');
+    expect(bodies).toContain('plan_client_artifacts');
+  });
+
+  test('parses tasks inside [!warning] callout with checked state', () => {
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 15));
+    const checked = tasks.find(t => t.body === '代码审查');
+    expect(checked?.checked).toBe(true);
+    const unchecked = tasks.find(t => t.body === '发布上线');
+    expect(unchecked?.checked).toBe(false);
+  });
+
+  test('callout tasks and normal tasks both appear', () => {
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 15));
+    const bodies = tasks.map(t => t.body);
+    expect(bodies).toContain('学 Rust');
+    expect(bodies).toContain('playbook-pg');
+  });
+
+  test('callout task indent is 0 (prefix stripped before matching)', () => {
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 15));
+    const calloutTask = tasks.find(t => t.body === 'playbook-pg');
+    // > 前缀剥离后，callout 内顶层任务 indent 为 0
+    expect(calloutTask?.indent).toBe(0);
+  });
+
+  test('nested callout task preserves rawText with > prefix', () => {
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 15));
+    const nested = tasks.find(t => t.body === '嵌套callout内任务');
+    // rawText 保留原始行（含 > > 前缀）
+    expect(nested?.rawText).toContain('> > ');
+  });
+
+  test('skips callout pseudo-task inside code block', () => {
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 15));
+    expect(tasks.map(t => t.body)).not.toContain('代码块中的伪任务');
+  });
+
+  test('callout task rawText keeps > prefix for writer round-trip', () => {
+    const tasks = parseFile(content, 'p', new Date(2026, 5, 15));
+    const calloutTask = tasks.find(t => t.body === 'playbook-pg');
+    expect(calloutTask?.rawText).toContain('> - [ ]');
+  });
+});

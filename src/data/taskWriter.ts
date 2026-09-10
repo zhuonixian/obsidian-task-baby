@@ -10,6 +10,8 @@ import { formatYmd } from '../utils/dateUtils';
 // group[2]: 复选框标记 " " | "x" | "X"
 // group[3]: "] " + 正文（不含 "] " 前缀的纯正文）
 const TASK_LINE_RE = /^(\s*(?:[-*+]|\d+[.)]) \[)( |x|X)\] (.*)$/;
+// Obsidian callout 引用行前缀：与 taskParser 的 CALLOUT_PREFIX_RE 保持一致
+const CALLOUT_PREFIX_RE = /^(?:> ?)+/;
 
 // ✅ 完成日期 emoji：用于取消勾选时清理
 const DONE_EMOJI_RE = /\s+✅\s*\d{4}-\d{2}-\d{2}/;
@@ -32,8 +34,10 @@ export async function toggleTask(
     throw new TaskLineChangedError(`Line ${task.lineStart} out of range`);
   }
 
-  // 2. 校验：当前行仍是任务行
-  const lineMatch = line.match(TASK_LINE_RE);
+  // 2. 校验：剥离 callout 引用前缀后，当前行仍是任务行
+  const calloutPrefix = line.match(CALLOUT_PREFIX_RE)?.[0] ?? '';
+  const strippedLine = line.replace(CALLOUT_PREFIX_RE, '');
+  const lineMatch = strippedLine.match(TASK_LINE_RE);
   if (!lineMatch) {
     throw new TaskLineChangedError(`Line ${task.lineStart} no longer a task`);
   }
@@ -64,6 +68,7 @@ export async function toggleTask(
     newBody = newBody.replace(DONE_EMOJI_RE, '');
   }
 
-  lines[task.lineStart] = `${prefix}${newMarker}] ${newBody}`;
+  // 回写时保留 callout 引用前缀
+  lines[task.lineStart] = `${calloutPrefix}${prefix}${newMarker}] ${newBody}`;
   await vault.modify(file, lines.join('\n'));
 }
