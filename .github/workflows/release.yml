@@ -43,8 +43,8 @@ jobs:
 
       - name: Pack zip for manual download
         run: |
-          cd dist/task-board
-          zip -r "$GITHUB_WORKSPACE/obsidian-task-board-${{ steps.meta.outputs.version }}.zip" .
+          cd dist/task-baby
+          zip -r "$GITHUB_WORKSPACE/obsidian-task-baby-${{ steps.meta.outputs.version }}.zip" .
 
       - name: Determine tag name
         id: tag
@@ -62,7 +62,7 @@ jobs:
           name: ${{ steps.tag.outputs.name }}
           generate_release_notes: true
           files: |
-            dist/task-board/main.js
-            dist/task-board/manifest.json
-            dist/task-board/styles.css
-            obsidian-task-board-${{ steps.meta.outputs.version }}.zip
+            dist/task-baby/main.js
+            dist/task-baby/manifest.json
+            dist/task-baby/styles.css
+            obsidian-task-baby-${{ steps.meta.outputs.version }}.zip

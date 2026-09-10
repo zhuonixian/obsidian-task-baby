@@ -32,7 +32,7 @@ jobs:
       - name: Upload dist artifact
         uses: actions/upload-artifact@v4
         with:
-          name: task-board-dist
-          path: dist/task-board/
+          name: task-baby-dist
+          path: dist/task-baby/
           retention-days: 14
           if-no-files-found: error

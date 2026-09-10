@@ -1,6 +1,6 @@
 {
-  "id": "task-board",
-  "name": "Task Board",
+  "id": "task-baby",
+  "name": "TaskBaby",
   "version": "0.2.0",
   "minAppVersion": "1.4.0",
   "description": "Visualize tasks across daily notes with a snooze/dismiss daily reminder",
